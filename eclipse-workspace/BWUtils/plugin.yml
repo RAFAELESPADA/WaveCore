@@ -1,0 +1,14 @@
+name: FPS
+author: zEnderX5_ , Rafael Auler
+main: bedwarsplugin.Main
+version: 1.0
+loadbefore: [KPCore , ViaVersion]
+depend: [ProtocolLib]
+commands:
+  gkick:
+  gunkick:
+  build:
+  spawn:
+  crash:
+  membro:
+  
