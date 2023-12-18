@@ -1,0 +1,8 @@
+name: ShadowKitPvP
+version: 1.0
+author: oJVzinn
+main: dev.ojvzinn.pvp.Main
+depend:
+  - kCore
+  - PlaceholderAPI
+  - ProtocolLib
