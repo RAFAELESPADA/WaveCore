@@ -68,6 +68,9 @@ public class Thor extends Kit {
     public void onPlayerInteractAbility(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Profile profile = Profile.getProfile(player.getName());
+        if (event.getPlayer().getWorld().equals(Bukkit.getWorld("1v1"))) {
+            return;
+        }
         if (KitPvP.isPlayingKitPvP(player)) {
             ItemStack item = event.getItem();
             if (event.getClickedBlock() != null && item != null && item.getType() == Material.GOLD_AXE && item.getItemMeta() != null && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals("§6Thor §7(Clique direito)") && isSelected(profile)) {

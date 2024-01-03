@@ -49,6 +49,8 @@ public class Language {
 
   public static List<String> lobby$npc$fps$hologram = Arrays
           .asList("§bWarp FPS", "§a{online} conectados!", "§e§lCLIQUE DIREITO");
+  public static List<String> lobby$npc$duels$hologram = Arrays
+          .asList("§bWarp 1v1", "§a{online} conectados!", "§e§lCLIQUE DIREITO");
 
   public static List<String> lobby$npc$arena$hologram = Arrays
           .asList("§bArena Principal", "§e§lCLIQUE DIREITO");

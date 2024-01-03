@@ -59,7 +59,9 @@ public class Viper extends Kit {
         if (event.isCancelled()) {
             return;
         }
-
+        if (event.getDamager().getWorld().equals(Bukkit.getWorld("1v1"))) {
+            return;
+        }
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Profile profile = Profile.getProfile(event.getDamager().getName());
             Profile profileDamager = Profile.getProfile(event.getEntity().getName()) ;

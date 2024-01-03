@@ -3,6 +3,7 @@ package dev.ojvzinn.pvp.game;
 import dev.ojvzinn.pvp.Main;
 import dev.ojvzinn.pvp.game.enums.WarpEnum;
 import dev.ojvzinn.pvp.game.object.ArenaObject;
+import dev.ojvzinn.pvp.game.object.DuelsObject;
 import dev.ojvzinn.pvp.game.object.FpsObject;
 import dev.ojvzinn.pvp.game.object.config.KitPvPConfig;
 import dev.slickcollections.kiwizin.player.Profile;
@@ -27,7 +28,7 @@ public abstract class KitPvP {
     public static void setupArenas() {
         new ArenaObject("arena", WarpEnum.ARENA);
         new FpsObject("fps", WarpEnum.FPS);
-
+        new DuelsObject("duels", WarpEnum.ONE_VS_ONE);
         Main.getInstance().getLogger().info("A arena e todas as warps foram carregadas com sucesso!");
     }
 

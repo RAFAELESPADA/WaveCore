@@ -68,6 +68,9 @@ public class Anchor extends Kit {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Profile profile = Profile.getProfile(event.getEntity().getName());
             Profile profileDamager = Profile.getProfile(event.getDamager().getName());
+            if (event.getEntity().getWorld().equals(Bukkit.getWorld("1v1"))) {
+                return;
+            }
             if (KitPvP.isPlayingKitPvP(profileDamager.getPlayer()) && KitPvP.isPlayingKitPvP(profile.getPlayer())) {
                 if (isSelected(profile) || isSelected(profileDamager)) {
                     Player damager = profileDamager.getPlayer();

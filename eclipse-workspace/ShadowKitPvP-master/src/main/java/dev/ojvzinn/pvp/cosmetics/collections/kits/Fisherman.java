@@ -77,6 +77,9 @@ public class Fisherman extends Kit {
             Profile profileFishing = Profile.getProfile(event.getCaught().getName());
             if (KitPvP.isPlayingKitPvP(profileFishing.getPlayer()) && KitPvP.isPlayingKitPvP(profile.getPlayer()) && !Kit.findByKitClass(Neo.class).isSelected(profileFishing)) {
                 if (isSelected(profile)) {
+                    if (event.getCaught().getWorld().equals(Bukkit.getWorld("1v1"))) {
+                        return;
+                    }
                     Player fishingPlayer = profileFishing.getPlayer();
                     Player player = profile.getPlayer();
                     fishingPlayer.teleport(player.getLocation());

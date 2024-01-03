@@ -7,7 +7,9 @@ import dev.ojvzinn.pvp.game.KitPvP;
 import dev.ojvzinn.pvp.hook.KPCoreHook;
 import dev.ojvzinn.pvp.league.LeagueManager;
 import dev.ojvzinn.pvp.listeners.ListenersAbstract;
+import dev.ojvzinn.pvp.listeners.X1;
 import dev.ojvzinn.pvp.lobby.*;
+import dev.ojvzinn.pvp.lobby.trait.DUELSNPC;
 import dev.ojvzinn.pvp.utils.TagHandlerExtension;
 import dev.slickcollections.kiwizin.Core;
 import dev.slickcollections.kiwizin.player.Profile;
@@ -44,7 +46,7 @@ public class Main extends KPlugin {
         KPCoreHook.setupHook();
         ListenersAbstract.setupListeners();
         Commands.setupCommands();
-
+        Bukkit.getPluginManager().registerEvents(new X1(this), this);
         Cosmetic.setupCosmetics();
         KitPvP.setupArenas();
         LeagueManager.setupLeagues();
@@ -54,6 +56,7 @@ public class Main extends KPlugin {
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), ()-> {
                     FPSNPC.setupNPCs();
                     ArenaNPC.setupNPCs();
+            DUELSNPC.setupNPCs();
                     DeliveryNPC.setupNPCs();
                 }, 20L);
 

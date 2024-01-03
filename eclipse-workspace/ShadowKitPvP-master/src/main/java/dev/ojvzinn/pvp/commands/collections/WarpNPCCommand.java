@@ -4,6 +4,7 @@ import dev.ojvzinn.pvp.commands.SubCommand;
 import dev.ojvzinn.pvp.game.enums.WarpEnum;
 import dev.ojvzinn.pvp.lobby.ArenaNPC;
 import dev.ojvzinn.pvp.lobby.FPSNPC;
+import dev.ojvzinn.pvp.lobby.trait.DUELSNPC;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -48,7 +49,19 @@ public class WarpNPCCommand extends SubCommand {
                     player.sendMessage("§aNPC adicionado com sucesso.");
                     break;
                 }
+                case ONE_VS_ONE: {
+                    if (DUELSNPC.getById(id) != null) {
+                        player.sendMessage("§cJá existe um NPC utilizando \"" + id + "\" como ID.");
+                        return;
+                    }
 
+                    Location location = player.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
+                    location.setYaw(player.getLocation().getYaw());
+                    location.setPitch(player.getLocation().getPitch());
+                    DUELSNPC.add(id, location);
+                    player.sendMessage("§aNPC adicionado com sucesso.");
+                    break;
+                }
                 case ARENA: {
                     if (ArenaNPC.getById(id) != null) {
                         player.sendMessage("§cJá existe um NPC utilizando \"" + id + "\" como ID.");
@@ -88,7 +101,17 @@ public class WarpNPCCommand extends SubCommand {
                     player.sendMessage("§cNPC removido com sucesso.");
                     break;
                 }
+                case ONE_VS_ONE: {
+                    DUELSNPC npc2 = DUELSNPC.getById(id);
+                    if (npc2 == null) {
+                        player.sendMessage("§cNão existe um NPC utilizando \"" + id + "\" como ID.");
+                        return;
+                    }
 
+                    DUELSNPC.remove(npc2);
+                    player.sendMessage("§cNPC removido com sucesso.");
+                    break;
+                }
                 case ARENA: {
                     ArenaNPC npc = ArenaNPC.getById(id);
                     if (npc == null) {

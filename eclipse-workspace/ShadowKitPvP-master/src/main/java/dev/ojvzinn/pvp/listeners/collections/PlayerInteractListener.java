@@ -7,8 +7,10 @@ import dev.ojvzinn.pvp.cosmetics.collections.Kit;
 import dev.ojvzinn.pvp.cosmetics.collections.kits.Quickdroper;
 import dev.ojvzinn.pvp.game.KitPvP;
 import dev.ojvzinn.pvp.game.enums.WarpEnum;
+import dev.ojvzinn.pvp.game.object.DuelsObject;
 import dev.ojvzinn.pvp.game.object.FpsObject;
 import dev.ojvzinn.pvp.listeners.ListenersAbstract;
+import dev.ojvzinn.pvp.listeners.X1;
 import dev.ojvzinn.pvp.menu.MenuRefill;
 import dev.slickcollections.kiwizin.Core;
 import dev.slickcollections.kiwizin.libraries.npclib.api.event.NPCRightClickEvent;
@@ -62,6 +64,12 @@ public class PlayerInteractListener extends ListenersAbstract {
           KitPvP.clearRegisters(player);
           KitPvP.findWarp(WarpEnum.FPS).leave(profile);
           player.teleport(Core.getLobby());
+        }
+        else if (npc.data().has("duels-npc")) {
+          KitPvP.clearRegisters(player);
+          DuelsObject fps = (DuelsObject) KitPvP.findWarp(WarpEnum.ONE_VS_ONE);
+          fps.addPlayerPlaying(player);
+          fps.join(profile);
         }
       }
     }

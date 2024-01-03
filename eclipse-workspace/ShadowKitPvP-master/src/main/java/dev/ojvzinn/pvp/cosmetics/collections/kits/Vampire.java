@@ -70,7 +70,9 @@ public class Vampire extends Kit {
         if (event.isCancelled()) {
             return;
         }
-
+        if (event.getDamager().getWorld().equals(Bukkit.getWorld("1v1"))) {
+            return;
+        }
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
             Profile profile = Profile.getProfile(event.getDamager().getName());
             Profile profileDamager = Profile.getProfile(event.getEntity().getName()) ;
@@ -103,7 +105,9 @@ public class Vampire extends Kit {
                     player.sendMessage("§cAguarde " + DelayKits.loadDelayProfiles(player).getDelayTime(true) + "s para utilizar este kit novamente.");
                     return;
                 }
-
+                if (event.getPlayer().getWorld().equals(Bukkit.getWorld("1v1"))) {
+                    return;
+                }
                 player.setAllowFlight(true);
                 player.setFlying(true);
                 player.playSound(player.getLocation(), Sound.BAT_LOOP, 1.0F, 1.0F);

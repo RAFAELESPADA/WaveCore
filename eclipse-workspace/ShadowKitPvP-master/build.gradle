@@ -35,7 +35,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'me.clip:placeholderapi:2.10.5'
-    implementation files('C:/ShadowCore.jar')
+    implementation files('C:/ShadowCore.jar', 'C:/CORE-NEW.jar')
 }
 
 test {

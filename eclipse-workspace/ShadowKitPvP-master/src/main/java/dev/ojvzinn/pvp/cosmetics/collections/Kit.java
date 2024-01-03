@@ -76,6 +76,7 @@ public abstract class Kit extends Cosmetic implements Listener {
         new Quickdroper("quickdroper", YamlConfiguration.loadConfiguration(file));
         new Fenix("fenix", YamlConfiguration.loadConfiguration(file));
         new Avatar("avatar", YamlConfiguration.loadConfiguration(file));
+        new Duels();
         new FPS();
     }
 
@@ -96,6 +97,9 @@ public abstract class Kit extends Cosmetic implements Listener {
 
     public void addProtection(String player) {
         NO_DAMAGE.add(player);
+    }
+    public void removeProtection(String player) {
+        NO_DAMAGE.remove(player);
     }
     @EventHandler
     public void onPlayerFallDamage(EntityDamageEvent event) {

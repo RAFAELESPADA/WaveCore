@@ -64,6 +64,9 @@ public class Stomper extends Kit {
 
         if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
             if (event.getEntity() instanceof Player) {
+                if (event.getEntity().getWorld().equals(Bukkit.getWorld("1v1"))) {
+                    return;
+                }
                 Profile profile = Profile.getProfile(event.getEntity().getName());
                 if (KitPvP.isPlayingKitPvP(profile.getPlayer())) {
                     if (isSelected(profile)) {

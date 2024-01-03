@@ -85,7 +85,9 @@ public class Fenix extends Kit {
                 ACTIVED_KIT.remove(player.getName());
                 KILL_SEQUENCE.remove(player.getName());
             }
-
+            if (event.getKiller().getPlayer().getWorld().equals(Bukkit.getWorld("1v1"))) {
+                return;
+            }
             if (isSelected(killer)) {
                 if (KILL_SEQUENCE.containsKey(killerP.getName())) {
                     KILL_SEQUENCE.replace(killerP.getName(), KILL_SEQUENCE.get(killerP.getName()) + 1);

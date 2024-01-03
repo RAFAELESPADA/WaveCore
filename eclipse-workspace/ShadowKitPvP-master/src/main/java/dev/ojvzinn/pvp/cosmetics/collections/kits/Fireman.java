@@ -64,6 +64,9 @@ public class Fireman extends Kit {
         }
 
         if (event.getEntity() instanceof Player) {
+            if (event.getEntity().getWorld().equals(Bukkit.getWorld("1v1"))) {
+                return;
+            }
             Player player = (Player) event.getEntity();
             Profile profile = Profile.getProfile(player.getName());
             if (KitPvP.isPlayingKitPvP(player)) {
