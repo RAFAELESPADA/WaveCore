@@ -1,7 +1,7 @@
 package dev.wplugins.waze.gerementions.punish.dao;
 
 
-import dev.slickcollections.kiwizin.bungee.Bungee;
+
 import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.database.Database;
 import dev.wplugins.waze.gerementions.database.MySQLDatabase;

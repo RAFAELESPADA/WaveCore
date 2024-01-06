@@ -31,8 +31,8 @@ public class CheckPunirCommand extends Commands {
         }
 
         ProxiedPlayer player = (ProxiedPlayer) sender;
-        if (!player.hasPermission("utils.checkpunir.use")) {
-            player.sendMessage(TextComponent.fromLegacyText("§fComando desconhecido."));
+        if (!player.hasPermission("wpunish.checkpunir")) {
+            player.sendMessage(TextComponent.fromLegacyText("§cVocê não tem permissão para isto."));
             return;
         }
 
@@ -41,7 +41,7 @@ public class CheckPunirCommand extends Commands {
             return;
         }
         String target = args[0];
-        if (sender.hasPermission("utils.checkpunir.use.ajudante")) {
+        if (sender.hasPermission("wpunish.ajudante")) {
             if (punishDao.getPunishService().getPunishes().stream().anyMatch(punish -> punish.getPlayerName().equalsIgnoreCase(target))) {
                 sender.sendMessage(TextComponent.fromLegacyText("\n§a\uD83D\uDFE9 Ativo §c\uD83D\uDFE5 Finalizado \n"));
                 punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(target)).forEach(punish -> {
@@ -66,7 +66,7 @@ public class CheckPunirCommand extends Commands {
             } else {
                 sender.sendMessage(TextComponent.fromLegacyText("\n§fJogador exemplar! Sem quaisquer punições ativas."));
             }
-        } else if (sender.hasPermission("role.gerente") || !sender.hasPermission("utils.checkpunir.use.ajudante")) {
+        } else if (sender.hasPermission("wpunish.admin") || !sender.hasPermission("wpunish.ajudante")) {
             if (punishDao.getPunishService().getPunishes().stream().anyMatch(punish -> punish.getPlayerName().equalsIgnoreCase(target))) {
                 sender.sendMessage(TextComponent.fromLegacyText("\n§a\uD83D\uDFE9 Ativo §c\uD83D\uDFE5 Finalizado \n"));
                 punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(target)).forEach(punish -> {
@@ -91,7 +91,7 @@ public class CheckPunirCommand extends Commands {
             } else {
                 sender.sendMessage(TextComponent.fromLegacyText("\n§fJogador exemplar! Sem quaisquer punições ativas."));
             }
-        } else if (!punish.getStafferName().equals(sender.getName()) || sender.hasPermission("utils.checkpunir.use.ajudante")) {
+        } else if (!punish.getStafferName().equals(sender.getName()) || sender.hasPermission("wpunish.ajudante")) {
             if (punishDao.getPunishService().getPunishes().stream().anyMatch(punish -> punish.getPlayerName().equalsIgnoreCase(target))) {
                 sender.sendMessage(TextComponent.fromLegacyText("\n§a\uD83D\uDFE9 Ativo §c\uD83D\uDFE5 Finalizado \n"));
                 punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(target)).forEach(punish -> {
@@ -116,7 +116,7 @@ public class CheckPunirCommand extends Commands {
             } else {
                 sender.sendMessage(TextComponent.fromLegacyText("\n§fJogador exemplar! Sem quaisquer punições ativas."));
             }
-        } else if (punish.getStafferName().equals(sender.getName()) || sender.hasPermission("utils.checkpunir.use.ajudante")) {
+        } else if (punish.getStafferName().equals(sender.getName()) || sender.hasPermission("wpunish.ajudante")) {
             if (punishDao.getPunishService().getPunishes().stream().anyMatch(punish -> punish.getPlayerName().equalsIgnoreCase(target))) {
                 sender.sendMessage(TextComponent.fromLegacyText("\n§a\uD83D\uDFE9 Ativo §c\uD83D\uDFE5 Finalizado \n"));
                 punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(target)).forEach(punish -> {

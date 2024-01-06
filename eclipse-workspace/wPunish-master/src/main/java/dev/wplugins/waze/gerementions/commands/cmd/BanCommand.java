@@ -1,6 +1,6 @@
 package dev.wplugins.waze.gerementions.commands.cmd;
 
-import dev.slickcollections.kiwizin.utils.StringUtils;
+
 import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.commands.Commands;
 import dev.wplugins.waze.gerementions.enums.punish.PunishType;
@@ -9,6 +9,7 @@ import dev.wplugins.waze.gerementions.punish.Punish;
 import dev.wplugins.waze.gerementions.punish.dao.PunishDao;
 import dev.wplugins.waze.gerementions.util.Util;
 import dev.wplugins.waze.gerementions.util.Webhook;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -27,16 +28,16 @@ public class BanCommand extends Commands {
     }
 
     public static Punish punish;
-    private String webhookURL = "https://discord.com/api/webhooks/1181247723660394546/jif9m6zF5-Gylit7op4vZGX2CyEP0JiBkCKxwOOVjrvv4_JtRZsjPXUjzly6Ffi94KDg";
+    private String webhookURL = Main.getInstance().getConfig().getString("WebHookURL");
     @Override
     public void perform(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("role.gerente")) {
-            sender.sendMessage(TextComponent.fromLegacyText("§cSomente Gerente ou superior podem executar este comando."));
+        if (!sender.hasPermission("wpunish.ban")) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cVocê não tem autorização para isto."));
             return;
         }
 
         if (args.length < 2) {
-            sender.sendMessage(TextComponent.fromLegacyText("§cUtilize \"/ban <user> <duração> [motivo]"));
+            sender.sendMessage(TextComponent.fromLegacyText("§cUtilize \"/ban <user> [motivo]"));
             return;
         }
         String target = args[0];
@@ -44,11 +45,16 @@ public class BanCommand extends Commands {
             sender.sendMessage(TextComponent.fromLegacyText("§cVocê não pode banir esse usuário"));
             return;
         }
+        ProxiedPlayer target2 = BungeeCord.getInstance().getPlayer(target);
 
+        if (target2.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
+            return;
+        }
 
-        ProxyServer.getInstance().getPlayers().stream().filter(player -> player.hasPermission("utils.punir.use")).forEach(player -> {
+        ProxyServer.getInstance().getPlayers().stream().filter(player -> player.hasPermission("wpunish.veralerta")).forEach(player -> {
             player.sendMessage(TextComponent.fromLegacyText("§c- " + args[0] + " §cfoi banido por " + sender.getName() +
-                    "\n§c- Motivo: Violação das Diretrizes" +
+                    "\n§c- Motivo: " + args[1] +
                     "\n§c- Duração: Permanente\n"));
         });
         PunishDao punish = new PunishDao();
@@ -60,7 +66,7 @@ public class BanCommand extends Commands {
                         .setThumbnail("https://mc-heads.net/avatar/" + target + "/500")
                         .setColor(Color.decode("#00A8FF"))
                         .addField("Usuário:", target, true)
-                        .addField("Motivo:", "Violação das Diretrizes", true)
+                        .addField("Motivo:", args[1], true)
                         .addField("Duração:", "Eterna", false)
                         .addField("Tipo:", "Banimento", true)
                         .addField("Expira em:", "Nunca", true)
@@ -105,7 +111,7 @@ public class BanCommand extends Commands {
         text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/checkpunir " + punish.getPlayerName()));
         text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§fClique para mais informações.")));
 
-        ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("utils.punir.use")).forEach(o -> {
+        ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("wpunish.veralerta")).forEach(o -> {
             o.sendMessage(TextComponent.fromLegacyText(" "));
             o.sendMessage(text);
             o.sendMessage(TextComponent.fromLegacyText(" "));
@@ -117,25 +123,25 @@ public class BanCommand extends Commands {
             target.sendMessage(TextComponent.fromLegacyText(" "));
 
             if (reason.getPunishType() == PunishType.TEMPBAN) {
-                target.disconnect(TextComponent.fromLegacyText("§c§lREDEFAINT\n\n§cVocê foi banido da rede\n" +
+                target.disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê foi banido da rede\n" +
                         "\n§cMotivo: " + reason.getText() + " - " + proof +
                         "\n§cDuração: " + Util.fromLong(punish.getExpire()) +
                         "\n§cID da punição: §e#" + punish.getId() +
-                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em §ehttps://discord.gg/QQMtWKFnah"));
+                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")));
                 return;
             }
             if (reason.getPunishType() == PunishType.BAN) {
-                target.disconnect(TextComponent.fromLegacyText("§c§lREDEFAINT\n\n§cVocê foi banido da rede\n" +
+                target.disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê foi banido da rede\n" +
                         "\n§cMotivo: " + reason.getText() + " - " + proof +
                         "\n§cDuração: Permanente" +
                         "\n§cID da punição: §e#" + punish.getId() +
-                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em §ehttps://discord.gg/QQMtWKFnah"));
+                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")));
             }
 
         }
 
     }
     private static boolean impossibleToBan(String nickName) {
-        return Stream.of("EvilNaraku", "WazeSxD").anyMatch(s -> s.equalsIgnoreCase(nickName));
+        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.equals(nickName));
     }
 }

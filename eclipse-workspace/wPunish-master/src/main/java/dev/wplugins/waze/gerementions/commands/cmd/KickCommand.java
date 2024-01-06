@@ -1,11 +1,12 @@
 package dev.wplugins.waze.gerementions.commands.cmd;
 
-import dev.slickcollections.kiwizin.utils.StringUtils;
+
 import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.commands.Commands;
 import dev.wplugins.waze.gerementions.punish.Punish;
 import dev.wplugins.waze.gerementions.punish.dao.PunishDao;
 import dev.wplugins.waze.gerementions.util.Webhook;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -30,8 +31,8 @@ public class KickCommand extends Commands {
     @Override
     public void perform(CommandSender sender, String[] args) {
         //ProxiedPlayer player = (ProxiedPlayer) (sender);
-        if (!sender.hasPermission("utils.kick.use")) {
-            sender.sendMessage(TextComponent.fromLegacyText("§cSomente Moderador ou superior podem executar este comando."));
+        if (!sender.hasPermission("wpunish.kick")) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cVocê não tem permissão para isto."));
             return;
         }
         if (args.length == 0) {
@@ -39,19 +40,23 @@ public class KickCommand extends Commands {
             return;
         }
         ProxiedPlayer target = ProxyServer.getInstance().getPlayer(args[0]);
-        String format = StringUtils.formatColors(StringUtils.join((Object[])args, " "));
+
         if (target == null) {
             sender.sendMessage(TextComponent.fromLegacyText("§cO jogador " + args[0] + "§c não encontra-se presente."));
             return;
         }
 
+        if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
+            return;
+        }
         if (impossibleToBan(target.getName())) {
             sender.sendMessage(TextComponent.fromLegacyText("§cVocê não pode kickar este jogador."));
             return;
         }
-        if (sender.hasPermission("role.admin") || !sender.hasPermission("utils.kick.use.moderador")) {
+        if (sender.hasPermission("wpunish.admin") || !sender.hasPermission("wpunish.moderador")) {
             sender.sendMessage(TextComponent.fromLegacyText("§cVocê expulsou o jogador " + target.getName() + "§c."));
-            target.disconnect(TextComponent.fromLegacyText("§c§lREDEFAINT\n\n§cVocê foi desconectado do servidor por " + sender + "."));
+            target.disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") +  "\n\n§cVocê foi desconectado do servidor por " + sender + "."));
             String textString = "§c* " + target.getName() + " §cfoi expulso por §c" + sender;
             TextComponent text = new TextComponent(textString);
             Webhook webhook = new Webhook(webhookURL);
@@ -68,7 +73,7 @@ public class KickCommand extends Commands {
             } catch (IOException e) {
                 Main.getInstance().getLogger().severe(e.getStackTrace().toString());
             }
-            ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("role.admin")).forEach(o -> {
+            ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("wpunish.veralerta")).forEach(o -> {
                 o.sendMessage(TextComponent.fromLegacyText(" "));
                 o.sendMessage(text);
                 o.sendMessage(TextComponent.fromLegacyText(" "));
@@ -79,15 +84,15 @@ public class KickCommand extends Commands {
                 target.sendMessage(TextComponent.fromLegacyText(" "));
 
             }
-        } else if (sender.hasPermission("utils.kick.use.moderador")) {
+        } else if (sender.hasPermission("wpunish.moderador") || !sender.hasPermission("wpunish.ajudante")) {
             sender.sendMessage(TextComponent.fromLegacyText("§eExpulsão aplicada com sucesso."));
-            target.disconnect(TextComponent.fromLegacyText("§c§lREDEFAINT\n\n§cVocê foi expulso da rede\n" +
+            target.disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê foi expulso da rede\n" +
                     "\n§cAutor: " + sender +
-                    "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em nosso forum: §ehttps://discord.gg/QQMtWKFnah"));
+                    "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em nosso forum" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")));
             String textString = "§c* " + target.getName() + " §cfoi expulso por §c" + sender;
             TextComponent text = new TextComponent(textString);
 
-            ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("role.admin")).forEach(o -> {
+            ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("wpunish.veralerta")).forEach(o -> {
                 o.sendMessage(TextComponent.fromLegacyText(" "));
                 o.sendMessage(text);
                 o.sendMessage(TextComponent.fromLegacyText(" "));
@@ -111,7 +116,7 @@ public class KickCommand extends Commands {
     }
 
     private static boolean impossibleToBan(String nickName) {
-        return Stream.of("Wazesxd").anyMatch(s -> s.equalsIgnoreCase(nickName));
+        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.equals(nickName));
     }
 
     static {

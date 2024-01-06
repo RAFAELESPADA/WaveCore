@@ -32,11 +32,11 @@ public class Listeners implements Listener {
             event.setCancelled(true);
 
             String proof = (punish.getProof() == null ? "Indisponível" : punish.getProof());
-            event.setCancelReason(TextComponent.fromLegacyText("§c§lREDEFAINT\n\n§cVocê está banido do servidor.\n" +
+            event.setCancelReason(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê está banido do servidor.\n" +
                     "\n§cMotivo: " + punish.getReason().getText() + " - " + proof +
                     "\n§cAutor da punição: §7" + punish.getStafferName() + "\n§cExpira em: §7" + (punish.getReason().getTime() == 0 ? "Nunca" : SDF2.format(System.currentTimeMillis() + punish.getReason().getTime()) +
                     "\n§cID da punição: §e#" + punish.getId() +
-                    "\n\n§cUse o ID §e#" + punish.getId() + " §cpara criar uma revisão em §n§chttps://discord.gg/QQMtWKFnah")));
+                    "\n\n§cUse o ID §e#" + punish.getId() + " §cpara criar uma revisão em" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
         });
     }
 
@@ -71,7 +71,7 @@ public class Listeners implements Listener {
                     player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (punish.getReason().getTime() > 0 ? "até o dia " + SDF.format(System.currentTimeMillis() + punish.getReason().getTime()) : "permanentemente") +
                             "\n\n§c* Motivo: " + punish.getReason().getText() + " - " + proof +
                             "\n§c* Autor: " + punish.getStafferName() +
-                            "\n§c* Use o ID §e#" + punish.getId() + " §cpara criar uma revisão em §n§chttps://discord.gg/QQMtWKFnah" +
+                            "\n§c* Use o ID §e#" + punish.getId() + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
                             "\n"));
                 }
             });

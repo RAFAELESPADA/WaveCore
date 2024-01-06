@@ -25,13 +25,7 @@
         </repository>
     </repositories>
     <dependencies>
-        <dependency>
-            <groupId>dev.slickcollections.kiwizin</groupId>
-            <artifactId>kCore</artifactId>
-            <version>latest</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/Home/Desktop/REDEFAINT/BUNGEECORD/plugins/ShadowCore.jar</systemPath>
-        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

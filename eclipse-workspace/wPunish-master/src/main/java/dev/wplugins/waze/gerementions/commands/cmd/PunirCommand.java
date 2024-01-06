@@ -1,7 +1,6 @@
 package dev.wplugins.waze.gerementions.commands.cmd;
 
 
-import dev.slickcollections.kiwizin.player.role.Role;
 import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.commands.Commands;
 import dev.wplugins.waze.gerementions.enums.punish.PunishType;
@@ -9,6 +8,7 @@ import dev.wplugins.waze.gerementions.enums.reason.Reason;
 import dev.wplugins.waze.gerementions.punish.Punish;
 import dev.wplugins.waze.gerementions.util.Util;
 import dev.wplugins.waze.gerementions.util.Webhook;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -41,7 +41,7 @@ public class PunirCommand extends Commands {
         }
 
         ProxiedPlayer player = (ProxiedPlayer) sender;
-        if (!player.hasPermission("utils.punir.use")) {
+        if (!player.hasPermission("wpunish.punir")) {
             player.sendMessage(TextComponent.fromLegacyText("§cSomente Ajudante ou superior podem executar este comando."));
             return;
         }
@@ -53,7 +53,11 @@ public class PunirCommand extends Commands {
 
         if (args.length == 1) {
             String targetName = args[0];
-
+ProxiedPlayer target = BungeeCord.getInstance().getPlayer(targetName);
+if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
+    sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
+    return;
+}
             if (targetName.equals(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText("§cVocê não pode se punir."));
                 return;
@@ -64,6 +68,7 @@ public class PunirCommand extends Commands {
             }
 
 
+
             sender.sendMessage(TextComponent.fromLegacyText("§eTipos de infração disponíveis:\n"));
 
             boolean a = true;
@@ -71,7 +76,7 @@ public class PunirCommand extends Commands {
             for (Reason value : Reason.values()) {
                 String punishType = value.getPunishType().name().replace("TEMP", "");
 
-                if (sender.hasPermission("punish.type." + punishType.toLowerCase())) {
+                if (sender.hasPermission("wpunish.type." + punishType.toLowerCase())) {
                     TextComponent text = new TextComponent((a ? "§f" : "§7") + value.getText());
                     String rank;
 
@@ -115,7 +120,7 @@ public class PunirCommand extends Commands {
                 sender.sendMessage(TextComponent.fromLegacyText("§cVerifique se você deixou um espaço em branco extra no motivo."));
                 return;
             }
-            if (sender.hasPermission("faint.flash")) {
+            if (sender.hasPermission("wpunir.punirsemprova")) {
                 if (punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(targetName)).filter(punish -> punish.getReason() == reason).noneMatch(Punish::isLocked)) {
                     apply(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
                     
@@ -173,7 +178,7 @@ public class PunirCommand extends Commands {
                 }
             }
 
-            if (sender.hasPermission("punish.type." + reason.getPunishType().name().replace("TEMP", "").toLowerCase())) {
+            if (sender.hasPermission("wpunish.type." + reason.getPunishType().name().replace("TEMP", "").toLowerCase())) {
                 if (punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(targetName)).filter(punish -> punish.getReason() == reason).noneMatch(Punish::isLocked)) {
                     apply(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().getText()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
                     Webhook webhook = new Webhook(webhookURL);
@@ -237,7 +242,7 @@ public class PunirCommand extends Commands {
         text.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/checkpunir " + punish.getPlayerName()));
         text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§fClique para mais informações.")));
 
-        ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("utils.punir.use")).forEach(o -> {
+        ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("wpunish.veralerta")).forEach(o -> {
             o.sendMessage(TextComponent.fromLegacyText(" "));
             o.sendMessage(text);
             o.sendMessage(TextComponent.fromLegacyText(" "));
@@ -248,19 +253,19 @@ public class PunirCommand extends Commands {
             target.sendMessage(TextComponent.fromLegacyText(" "));
 
             if (reason.getPunishType() == PunishType.TEMPBAN) {
-                target.disconnect(TextComponent.fromLegacyText("§c§lREDEFAINT\n\n§cVocê foi banido da rede\n" +
+                target.disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê foi banido da rede\n" +
                         "\n§cMotivo: " + reason.getText() + " - " + proof +
                         "\n§cDuração: " + Util.fromLong(punish.getExpire()) +
                         "\n§cID da punição: §e#" + punish.getId() +
-                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em §ehttps://discord.gg/QQMtWKFnah"));
+                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")));
                 return;
             }
             if (reason.getPunishType() == PunishType.BAN) {
-                target.disconnect(TextComponent.fromLegacyText("§c§lREDEFAINT\n\n§cVocê foi banido da rede\n" +
+                target.disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê foi banido da rede\n" +
                         "\n§cMotivo: " + reason.getText() + " - " + proof +
                         "\n§cDuração: Permanente" +
                         "\n§cID da punição: §e#" + punish.getId() +
-                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em §ehttps://discord.gg/QQMtWKFnah"));
+                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")));
             }
         }
     }
@@ -270,7 +275,7 @@ public class PunirCommand extends Commands {
     }
 
     private static boolean impossibleToBan(String nickName) {
-        return Stream.of("EvilNaraku", "WazeSxd").anyMatch(s -> s.equalsIgnoreCase(nickName));
+        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.equals(nickName));
     }
 }
 

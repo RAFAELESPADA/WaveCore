@@ -20,8 +20,8 @@ public class RevogarCommand extends Commands {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("utils.checkpunir.use")) {
-            sender.sendMessage(TextComponent.fromLegacyText("§fComando desconhecido."));
+        if (!sender.hasPermission("wpunish.despunir")) {
+            sender.sendMessage(TextComponent.fromLegacyText("§cVocê não tem permissão para isso."));
             return;
         }
         String target = args[0];
@@ -29,7 +29,7 @@ public class RevogarCommand extends Commands {
         if (args.length != 1) {
             sender.sendMessage(TextComponent.fromLegacyText("§cUtilize /revogar <jogador>."));
             return;
-        } else if (sender.hasPermission("role.admin") || !sender.hasPermission("utils.checkpunir.use.ajudante")) {
+        } else if (sender.hasPermission("wpunish.admin") || !sender.hasPermission("wpunish.ajudante")) {
             if (punishDao.getPunishService().getPunishes().stream().anyMatch(punish -> punish.getPlayerName().equalsIgnoreCase(target))) {
                 punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(target)).forEach(punish -> {
                     sender.sendMessage(TextComponent.fromLegacyText("\n§eMotivos de revogação de punição disponíveis:"));
@@ -53,7 +53,7 @@ public class RevogarCommand extends Commands {
             } else {
                 sender.sendMessage(TextComponent.fromLegacyText("§fJogador exemplar! Sem quaisquer punições ativas."));
             }
-        } else if (punish.getStafferName().equals(sender.getName()) || sender.hasPermission("utils.checkpunir.use")) {
+        } else if (punish.getStafferName().equals(sender.getName()) || sender.hasPermission("wpunish.checkpunir")) {
             if (punishDao.getPunishService().getPunishes().stream().anyMatch(punish -> punish.getPlayerName().equalsIgnoreCase(target))) {
                 punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(target)).forEach(punish -> {
                     sender.sendMessage(TextComponent.fromLegacyText("\n§eMotivos de revogação de punição disponíveis:"));

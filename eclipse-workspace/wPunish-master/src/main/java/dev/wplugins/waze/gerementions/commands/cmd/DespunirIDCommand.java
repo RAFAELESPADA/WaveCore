@@ -1,6 +1,6 @@
 package dev.wplugins.waze.gerementions.commands.cmd;
 
-import dev.slickcollections.kiwizin.player.role.Role;
+
 import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.commands.Commands;
 import dev.wplugins.waze.gerementions.punish.Punish;
@@ -32,8 +32,8 @@ public class DespunirIDCommand extends Commands {
         }
 
         ProxiedPlayer player = (ProxiedPlayer) sender;
-        if (!player.hasPermission("utils.checkpunir.use")) {
-            player.sendMessage(TextComponent.fromLegacyText("§fComando desconhecido."));
+        if (!player.hasPermission("wpunish.despunir")) {
+            player.sendMessage(TextComponent.fromLegacyText("§cVocê não tem autorização para isso."));
             return;
         }
 
@@ -51,14 +51,14 @@ public class DespunirIDCommand extends Commands {
         String staffName = punish.getStafferName();
         punishDao.disablePunish(id);
         TextComponent text = new TextComponent(TextComponent.fromLegacyText("§cO jogador " + playerName + " §cacabou de ter sua punição revogada."));
-        text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("" + Role.getColored(playerName) +
+        text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§e" + playerName +
                 "\n\n§fID: §e#" + punish.getId() +
                 "\n§fMotivo: §7" + punish.getReason().getText() +
                 "\n§fAutor da revogação: §7" + staffName +
                 "\n§fTipo de punição: §7" + punish.getReason().getPunishType().name().replace("TEMP", ""))));
 
         sender.sendMessage(TextComponent.fromLegacyText("§aVocê revogou a punição do jogador " + playerName + "§a."));
-        ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("role.admin")).forEach(o -> o.sendMessage(text));
+        ProxyServer.getInstance().getPlayers().stream().filter(o -> o.hasPermission("wpunish.veralerta")).forEach(o -> o.sendMessage(text));
     }
 
     static {
