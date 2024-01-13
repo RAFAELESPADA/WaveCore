@@ -46,10 +46,11 @@ public class BanCommand extends Commands {
             return;
         }
         ProxiedPlayer target2 = BungeeCord.getInstance().getPlayer(target);
-
-        if (target2.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
-            sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
-            return;
+        if (BungeeCord.getInstance().getPlayer(target) != null) {
+            if (target2.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass") && target2 != null) {
+                sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
+                return;
+            }
         }
 
         ProxyServer.getInstance().getPlayers().stream().filter(player -> player.hasPermission("wpunish.veralerta")).forEach(player -> {
@@ -58,7 +59,7 @@ public class BanCommand extends Commands {
                     "\n§c- Duração: Permanente\n"));
         });
         PunishDao punish = new PunishDao();
-        apply(punish.createPunish(target, sender.getName(), Reason.valueOf("DIRETI"), null, PunishType.BAN.name()), ProxyServer.getInstance().getPlayer(target), sender.getName());
+        apply(punish.createPunish(target, sender.getName(), Reason.DIRETI, null, PunishType.BAN.name()), ProxyServer.getInstance().getPlayer(target), sender.getName());
         Webhook webhook = new Webhook(webhookURL);
         webhook.addEmbed(
                 new Webhook.EmbedObject()
@@ -85,8 +86,7 @@ public class BanCommand extends Commands {
         String webhookURL = "https://discord.com/api/webhooks/1181247723660394546/jif9m6zF5-Gylit7op4vZGX2CyEP0JiBkCKxwOOVjrvv4_JtRZsjPXUjzly6Ffi94KDg";
         switch (reason.getPunishType()) {
             case BAN:
-                textString = "§c* " + punish.getPlayerName() + " §cfoi banido." +
-                        "\n§c* Motivo: " + reason.getText() + " (Permanente)";
+                textString = "§c* " + punish.getPlayerName() + " §cfoi banido para sempre";
 
                 break;
             case MUTE:
@@ -142,6 +142,6 @@ public class BanCommand extends Commands {
 
     }
     private static boolean impossibleToBan(String nickName) {
-        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.equals(nickName));
+        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.contains(nickName));
     }
 }

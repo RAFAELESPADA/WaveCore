@@ -46,7 +46,7 @@ public class KickCommand extends Commands {
             return;
         }
 
-        if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
+        if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass") && target != null) {
             sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
             return;
         }
@@ -116,7 +116,7 @@ public class KickCommand extends Commands {
     }
 
     private static boolean impossibleToBan(String nickName) {
-        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.equals(nickName));
+        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.contains(nickName));
     }
 
     static {

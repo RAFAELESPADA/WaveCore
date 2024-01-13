@@ -39,5 +39,13 @@
             <scope>system</scope>
             <systemPath>C:/Users/Home/Desktop/REDEFAINT/BUNGEECORD/bungeecord.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>net.md-4</groupId>
+            <artifactId>bungeecord-api4</artifactId>
+            <version>latest</version>
+            <scope>system</scope>
+            <systemPath>C:/Users/Home/Desktop/REDEFAINT/SHADOW KITPVP/server.jar</systemPath>
+        </dependency>
+
     </dependencies>
 </project>

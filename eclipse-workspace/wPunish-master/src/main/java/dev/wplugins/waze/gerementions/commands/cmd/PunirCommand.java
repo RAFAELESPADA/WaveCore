@@ -1,11 +1,14 @@
 package dev.wplugins.waze.gerementions.commands.cmd;
 
 
+import dev.wplugins.waze.gerementions.BukkitMain;
 import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.commands.Commands;
 import dev.wplugins.waze.gerementions.enums.punish.PunishType;
 import dev.wplugins.waze.gerementions.enums.reason.Reason;
+import dev.wplugins.waze.gerementions.enums.reason.ReasonSpigot;
 import dev.wplugins.waze.gerementions.punish.Punish;
+import dev.wplugins.waze.gerementions.punish.service.PunishSpigot;
 import dev.wplugins.waze.gerementions.util.Util;
 import dev.wplugins.waze.gerementions.util.Webhook;
 import net.md_5.bungee.BungeeCord;
@@ -17,6 +20,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import dev.wplugins.waze.gerementions.punish.dao.PunishDao;
+import org.bukkit.entity.Player;
 
 import java.awt.*;
 import java.io.IOException;
@@ -54,9 +58,12 @@ public class PunirCommand extends Commands {
         if (args.length == 1) {
             String targetName = args[0];
 ProxiedPlayer target = BungeeCord.getInstance().getPlayer(targetName);
-if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
-    sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
-    return;
+
+if (BungeeCord.getInstance().getPlayer(targetName) != null) {
+    if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
+        sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
+        return;
+    }
 }
             if (targetName.equals(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText("§cVocê não pode se punir."));
@@ -123,7 +130,18 @@ if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ig
             if (sender.hasPermission("wpunir.punirsemprova")) {
                 if (punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(targetName)).filter(punish -> punish.getReason() == reason).noneMatch(Punish::isLocked)) {
                     apply(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
-                    
+                    if (reason.getPunishType() == PunishType.MUTE) {
+                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
+                    }
+                    else if (reason.getPunishType() == PunishType.BAN) {
+                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
+                    }
+                    if (reason.getPunishType() == PunishType.TEMPMUTE) {
+                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPMUTE.name());
+                    }
+                    if (reason.getPunishType() == PunishType.TEMPBAN) {
+                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPBAN.name());
+                    }
                     Webhook webhook = new Webhook(webhookURL);
                     webhook.addEmbed(
                             new Webhook.EmbedObject()
@@ -181,6 +199,18 @@ if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ig
             if (sender.hasPermission("wpunish.type." + reason.getPunishType().name().replace("TEMP", "").toLowerCase())) {
                 if (punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(targetName)).filter(punish -> punish.getReason() == reason).noneMatch(Punish::isLocked)) {
                     apply(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().getText()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                    if (reason.getPunishType() == PunishType.MUTE) {
+                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
+                    }
+                    else if (reason.getPunishType() == PunishType.BAN) {
+                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
+                    }
+                    if (reason.getPunishType() == PunishType.TEMPMUTE) {
+                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPMUTE.name());
+                    }
+                    if (reason.getPunishType() == PunishType.TEMPBAN) {
+                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPBAN.name());
+                    }
                     Webhook webhook = new Webhook(webhookURL);
                     webhook.addEmbed(
                             new Webhook.EmbedObject()
@@ -269,13 +299,63 @@ if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ig
             }
         }
     }
+    private static void apply2(PunishSpigot punish, Player target, String staffer) {
+        final String textString;
+        final ReasonSpigot reason = punish.getReason();
+        final String proof = (punish.getProof() == null ? "Nenhuma" : punish.getProof());
+
+        switch (reason.getPunishType()) {
+            case BAN:
+                textString = "§c* " + punish.getPlayerName() + " §cfoi banido." +
+                        "\n§c* Motivo: " + reason.getText() + " (Permanente)";
+
+                break;
+            case MUTE:
+                textString = "§c* " + punish.getPlayerName() + " §cfoi silenciado por " + staffer +
+                        "\n§c* Motivo: " + reason.getText() + " - " + proof +
+                        "\n§c* Duração: Permanente\n";
+                break;
+            case TEMPBAN:
+                textString = "§c* " + punish.getPlayerName() + " §cfoi banido." +
+                        "\n§c* Motivo: " + reason.getText() + " (" + Util.fromLong(punish.getExpire()) + ")";
+
+                break;
+            case TEMPMUTE:
+                textString = "\n§c* " + punish.getPlayerName() + " §cfoi silenciado por " + staffer +
+                        "\n§c* Motivo: " + reason.getText() + " - " + proof +
+                        "\n§c* Duração: " + Util.fromLong(punish.getExpire());
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + reason.getPunishType());
+        }
+
+        if (target != null) {
+
+            if (reason.getPunishType() == PunishType.TEMPBAN) {
+                target.kickPlayer(BukkitMain.getPlugin().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê foi banido da rede\n" +
+                        "\n§cMotivo: " + reason.getText() + " - " + proof +
+                        "\n§cDuração: " + Util.fromLong(punish.getExpire()) +
+                        "\n§cID da punição: §e#" + punish.getId() +
+                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"));
+                return;
+            }
+            if (reason.getPunishType() == PunishType.BAN) {
+                target.kickPlayer(BukkitMain.getPlugin().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê foi banido da rede\n" +
+                        "\n§cMotivo: " + reason.getText() + " - " + proof +
+                        "\n§cDuração: Permanente" +
+                        "\n§cID da punição: §e#" + punish.getId() +
+                        "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"));
+            }
+        }
+    }
+
 
     static {
         punishDao = Main.getInstance().getPunishDao();
     }
 
     private static boolean impossibleToBan(String nickName) {
-        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.equals(nickName));
+        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.contains(nickName));
     }
 }
 

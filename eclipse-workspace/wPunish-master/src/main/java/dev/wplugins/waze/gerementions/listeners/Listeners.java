@@ -57,6 +57,7 @@ public class Listeners implements Listener {
                         event.setCancelled(false);
                         return;
                     }
+                }
                     if (message.startsWith("/report") || message.startsWith("/s") || message.startsWith("/c") || message.startsWith("/reportar") ||
                             message.equalsIgnoreCase("/lobby") ||
                             message.startsWith("/logar") || message.startsWith("/login") || message.equalsIgnoreCase("/rejoin") ||
@@ -64,7 +65,7 @@ public class Listeners implements Listener {
                         event.setCancelled(false);
                         return;
 
-                    }
+
                 }
                 if (!player.getServer().getInfo().getName().equalsIgnoreCase("ss")) {
                     event.setCancelled(true);
@@ -73,9 +74,8 @@ public class Listeners implements Listener {
                             "\n§c* Autor: " + punish.getStafferName() +
                             "\n§c* Use o ID §e#" + punish.getId() + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
                             "\n"));
-                }
-            });
-        });
-    }
 
-}
+            };
+        });
+});}}
+

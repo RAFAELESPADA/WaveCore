@@ -1,5 +1,6 @@
 package dev.wplugins.waze.gerementions.database;
 
+import dev.wplugins.waze.gerementions.BukkitMain;
 import dev.wplugins.waze.gerementions.Main;
 
 import javax.sql.rowset.CachedRowSet;
@@ -20,46 +21,76 @@ public class MySQLDatabase extends Database {
     private String host;
     private String port;
     private String database;
+    public static PluginInstance instancia;
     private String username;
     private String password;
 
     public MySQLDatabase() {
-        this.host = Main.getInstance().getConfig().getString("database.mysql.host");
-        this.port = Main.getInstance().getConfig().getString("database.mysql.porta");
-        this.database = Main.getInstance().getConfig().getString("database.mysql.nome");
-        this.username = Main.getInstance().getConfig().getString("database.mysql.usuario");
-        this.password = Main.getInstance().getConfig().getString("database.mysql.senha");
+        if (instancia == PluginInstance.BUNGEECORD) {
+            this.host = Main.getInstance().getConfig().getString("database.mysql.host");
+            this.port = Main.getInstance().getConfig().getString("database.mysql.porta");
+            this.database = Main.getInstance().getConfig().getString("database.mysql.nome");
+            this.username = Main.getInstance().getConfig().getString("database.mysql.usuario");
+            this.password = Main.getInstance().getConfig().getString("database.mysql.senha");
+        } else {
 
+        }
         this.executor = Executors.newCachedThreadPool();
         openConnection();
         update("CREATE TABLE IF NOT EXISTS `wPunish` (`id` VARCHAR(6), `playerName` VARCHAR(16), `stafferName` VARCHAR(16), `reason` TEXT, `type` TEXT, `proof` TEXT, `date` BIGINT(100), `expires` LONG, PRIMARY KEY(`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;");
+        update("CREATE TABLE IF NOT EXISTS `wPunish2` (`id` VARCHAR(6), `playerName` VARCHAR(16), `stafferName` VARCHAR(16), `reason` TEXT, `type` TEXT, `proof` TEXT, `date` BIGINT(100), `expires` LONG, PRIMARY KEY(`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;");
     }
 
     public void openConnection() {
         if (!isConnected()) {
             try {
                 boolean bol = connection2 == null;
-                String rei = Main.getInstance().getConfig().getString("database.url");
-                // Set URL for data source
-
-
-                //jdbc:mysql://u1573_o3nKwl3hpf:L%3DoCfWF!%40SY7E64WYOUFp%2BEg@node18.elgaehost.com.br:3306/s1573_PUNISH
-               connection2 = DriverManager.getConnection(rei);
-                Main.getInstance().getLogger().log(Level.FINE, "CONNECTION STRING" + connection2);
-                if (bol) {
-                    Main.getInstance().getLogger().info("Conectado ao MySQL!");
-                    return;
+                String rei;
+                if (instancia == PluginInstance.BUNGEECORD) {
+                    Main.getInstance().getLogger().info("CONECTANDO...");
+                    rei = Main.getInstance().getConfig().getString("database.url");
+                    // Set URL for data source
+                } else {
+                    BukkitMain.getPlugin().getLogger().info("CONECTANDO NO MYSQL...");
+                    Class.forName("com.mysql.jdbc.Driver");
+                    rei = BukkitMain.getPlugin().getConfig().getString("database.url");
                 }
 
-                Main.getInstance().getLogger().info("Reconectado ao MySQL!");
+                if (instancia == PluginInstance.BUNGEECORD) {
+                    //jdbc:mysql://u1573_o3nKwl3hpf:L%3DoCfWF!%40SY7E64WYOUFp%2BEg@node18.elgaehost.com.br:3306/s1573_PUNISH
+                    connection2 = DriverManager.getConnection(rei);
+                } else {
+                    connection2 =  DriverManager.getConnection("jdbc:mysql://" + BukkitMain.getPlugin().getConfig().getString("database.host") + ":" + BukkitMain.getPlugin().getConfig().getString("database.porta") + "/" + BukkitMain.getPlugin().getConfig().getString("database.nome"), BukkitMain.getPlugin().getConfig().getString("database.user"), BukkitMain.getPlugin().getConfig().getString("database.senha"));
+
+                }
+
+                if (bol) {
+                    if (instancia == PluginInstance.BUNGEECORD) {
+                        Main.getInstance().getLogger().info("Conectado ao MySQL!");
+                    }  else {
+                        BukkitMain.getPlugin().getLogger().info("Conectado ao MYSQL!");
+                    }
+
+                }
 
             } catch (SQLException e) {
-                Main.getInstance().getLogger().log(Level.FINE, "CONNECTION STRING" + connection);
 
-                Main.getInstance().getLogger().log(Level.SEVERE, "Could not open MySQL connection: ", e);
+                    if (instancia == PluginInstance.BUNGEECORD) {
+
+                        Main.getInstance().getLogger().log(Level.SEVERE, "Could not open MySQL connection: ", e);
+
+                    }
+                    BukkitMain.getPlugin().getLogger().log(Level.SEVERE, "Could not open MySQL connection: ", e);
+
+
+                } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
-    }
+                }
+
+
+
 
     @Override
     public void closeConnection() {
@@ -84,7 +115,6 @@ public class MySQLDatabase extends Database {
             ps.execute();
             ps.close();
         } catch (SQLException e) {
-            Main.getInstance().getLogger().log(Level.WARNING, "Could not execute SQL: ", e);
         }
     }
 
@@ -103,7 +133,6 @@ public class MySQLDatabase extends Database {
             }
             return ps;
         } catch (SQLException e) {
-            Main.getInstance().getLogger().log(Level.WARNING, "Could not Prepare Statement: ", e);
         }
 
         return null;
@@ -127,7 +156,6 @@ public class MySQLDatabase extends Database {
                         return crs;
                     }
                 } catch (Exception e) {
-                    Main.getInstance().getLogger().log(Level.WARNING, "Could not Execute Query: ", e);
                 }
 
                 return null;
@@ -137,7 +165,6 @@ public class MySQLDatabase extends Database {
                 rowSet = future.get();
             }
         } catch (Exception e) {
-            Main.getInstance().getLogger().log(Level.WARNING, "Could not Call FutureTask: ", e);
         }
 
         return rowSet;

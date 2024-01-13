@@ -1,7 +1,10 @@
 package dev.wplugins.waze.gerementions;
 
+import dev.wplugins.waze.gerementions.Reports.ReportsDao;
 import dev.wplugins.waze.gerementions.commands.Commands;
 import dev.wplugins.waze.gerementions.database.Database;
+import dev.wplugins.waze.gerementions.database.MySQLDatabase;
+import dev.wplugins.waze.gerementions.database.PluginInstance;
 import dev.wplugins.waze.gerementions.listeners.Listeners;
 import dev.wplugins.waze.gerementions.thread.PunishThread;
 import dev.wplugins.waze.gerementions.punish.dao.PunishDao;
@@ -24,6 +27,8 @@ public class Main extends Plugin {
     private static Main instance;
 
     private PunishDao punishDao;
+    private static dev.wplugins.waze.gerementions.Reports.ReportsDao reportsDao;
+    private static dev.wplugins.waze.gerementions.Reports.ReportThread reportst;
 
     private PunishThread punishThread;
 
@@ -34,6 +39,8 @@ public class Main extends Plugin {
     @Override
     public void onEnable() {
         instance = this;
+
+        MySQLDatabase.instancia = PluginInstance.BUNGEECORD;
         saveDefaultConfig();
         Database.setupDatabase();
         AtomicLong ms = new AtomicLong(System.currentTimeMillis());
@@ -42,7 +49,6 @@ public class Main extends Plugin {
         punishDao = new PunishDao();
         punishDao.loadPunishes();
         Commands.setupCommands();
-
 
         this.getProxy().getPluginManager().registerListener(this, new Listeners());
 
@@ -56,6 +62,7 @@ public class Main extends Plugin {
                 File folder = file.getParentFile();
                 if (!folder.exists()) {
                     file.mkdir();
+                    folder.mkdir();
                 }
                 copyFile(Main.getInstance().getResourceAsStream(fileName + ".yml"), file);
             }
@@ -105,5 +112,13 @@ public class Main extends Plugin {
 
     public static Main getInstance() {
         return instance;
+    }
+
+    public static ReportsDao getReportDao() {
+        return reportsDao;
+    }
+
+    public static dev.wplugins.waze.gerementions.Reports.ReportThread getReportThread() {
+        return reportst;
     }
 }

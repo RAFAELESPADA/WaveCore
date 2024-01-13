@@ -5,6 +5,7 @@ import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.commands.Commands;
 import dev.wplugins.waze.gerementions.punish.Punish;
 import dev.wplugins.waze.gerementions.punish.dao.PunishDao;
+import dev.wplugins.waze.gerementions.punish.service.PunishSpigot;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -42,6 +43,7 @@ public class DespunirIDCommand extends Commands {
         }
         String id = args[0];
         Punish punish = punishDao.getPunishService().get(id);
+        PunishSpigot punish2 = punishDao.getPunishService2().get(id);
 
         if (punish == null) {
             sender.sendMessage(TextComponent.fromLegacyText("§cNão existe punição com este id."));
@@ -50,7 +52,9 @@ public class DespunirIDCommand extends Commands {
         String playerName = punish.getPlayerName();
         String staffName = punish.getStafferName();
         punishDao.disablePunish(id);
+        punishDao.disablePunish2(id);
         TextComponent text = new TextComponent(TextComponent.fromLegacyText("§cO jogador " + playerName + " §cacabou de ter sua punição revogada."));
+
         text.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§e" + playerName +
                 "\n\n§fID: §e#" + punish.getId() +
                 "\n§fMotivo: §7" + punish.getReason().getText() +

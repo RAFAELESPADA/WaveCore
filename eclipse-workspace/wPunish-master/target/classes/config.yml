@@ -2,6 +2,11 @@ Prefix: '&c&lREDEFAINT'
 AppealSite: '&ehttps://discord.gg/QQMtWKFnah'
 database:
   url: 'jdbc:mysql://u15753_o3nKwl3hpf:L%3DoCfWF!%40SY7E/64WYOUFp%2BEg@node18.elgaehost.com.br:3306/s1573_PUNISH'
+  nome: 's1573_PUNISH'
+  user: 'u1573_o3nKwl3hpf'
+  porta: '3306'
+  senha: 'L=oCfWF!@SY7E64WYOUFp+Eg'
+  host: 'node18.elgaehost.com.br'
 WebHookURL: 'https://discord.com/api/webhooks/1181247723660394546RR/jif9m6zF5-Gylit7op4vZGX2CyEP0JiBkCKxwOOVjrvv4_JtRZsjPXUjzly6Ffi94KDg'
 NicksAntiBan:
   - WazeSxD
@@ -13,7 +18,7 @@ NicksAntiBan:
 # TEMPO 0 = ETERNO
 # SE COLOCAR O TEMPO 0 EM ALGUM TROQUE O TIPO PARA BAN OU MUTE ( NAO PONHA TEMPMUTE OU TEMPBAN )
 
-AmeacaTempoBan: 0 #ETERNO
+AmeacaTempoBan: 10 #ETERNO
 AmeacaTempoType: DAYS
 AntiJogo-Game-TempoBan: 3 #3 DIAS
 AntiJogoTempoType: DAYS
@@ -28,14 +33,21 @@ DesinformacaoTempoType: DAYS
 DivulgacaoSimplesTempoMute: 1 #1 DIA
 DivulgacaoSimplesTempoType: DAYS
 DivulgacaoGraveTempoBan: 0 #ETERNO
+DivulgacaoGraveTempoType: DAYS
 SpamTempoMute: 6 #6 HORAS
 SpamTempoType: HOURS
 HackTempoBan: 0 #ETERNO
+HackTempoType: DAYS
 ContaFakeTempoBan: 0 #ETERNO
+ContaFakeTempoType: DAYS
 ViolacaoDasDiretrizesTempoBan: 0 #ETERNO
+ViolacaoDasDiretrizesTempoType: DAYS
 EstornoTempoBan: 0 #ETERNO
+EstornoTempoType: DAYS
 ContaAltTempoBan: 0 #ETERNO
+ContaAltTempoType: DAYS
 NickOfensivoTempoBan: 0 # ETERNO
+NickOfensivoTempoType: DAYS
 OfensaaPlayerTempoMute: 16 #16 HORAS
 OfensaAPlayerTempoType: HOURS
 OfensaaStaffTempoMute: 7 #7 DIAS
