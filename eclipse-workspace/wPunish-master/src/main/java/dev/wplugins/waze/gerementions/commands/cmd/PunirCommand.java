@@ -4,6 +4,7 @@ package dev.wplugins.waze.gerementions.commands.cmd;
 import dev.wplugins.waze.gerementions.BukkitMain;
 import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.commands.Commands;
+import dev.wplugins.waze.gerementions.database.MySQLDatabase;
 import dev.wplugins.waze.gerementions.enums.punish.PunishType;
 import dev.wplugins.waze.gerementions.enums.reason.Reason;
 import dev.wplugins.waze.gerementions.enums.reason.ReasonSpigot;
@@ -12,6 +13,7 @@ import dev.wplugins.waze.gerementions.punish.service.PunishSpigot;
 import dev.wplugins.waze.gerementions.util.Util;
 import dev.wplugins.waze.gerementions.util.Webhook;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -24,6 +26,9 @@ import org.bukkit.entity.Player;
 
 import java.awt.*;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.stream.Stream;
 
@@ -128,43 +133,54 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
                 return;
             }
             if (sender.hasPermission("wpunir.punirsemprova")) {
-                if (punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(targetName)).filter(punish -> punish.getReason() == reason).noneMatch(Punish::isLocked)) {
-                    apply(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
-                    if (reason.getPunishType() == PunishType.MUTE) {
-                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
-                    }
-                    else if (reason.getPunishType() == PunishType.BAN) {
-                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
-                    }
-                    if (reason.getPunishType() == PunishType.TEMPMUTE) {
-                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPMUTE.name());
-                    }
-                    if (reason.getPunishType() == PunishType.TEMPBAN) {
-                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPBAN.name());
-                    }
-                    Webhook webhook = new Webhook(webhookURL);
-                    webhook.addEmbed(
-                            new Webhook.EmbedObject()
-                                    .setDescription("Um usuário foi punido do servidor.")
-                                    .setThumbnail("https://mc-heads.net/avatar/" + targetName + "/500")
-                                    .setColor(Color.decode("#00A8FF"))
-                                    .addField("Usuário:", targetName, true)
-                                    .addField("Motivo:", reason.getText(), true)
-                                    .addField("Staffer:", sender.getName(), true)
-                                    .addField("Duração:", reason.getTime() == 0 ? "Permanente" : Util.fromLongWithoutDiff(reason.getTime()), true)
-                                    .addField("Tipo:", reason.getPunishType().getText(), true)
-                                    .addField("Expira em:", reason.getTime() == 0 ? "Nunca" : SDF.format(System.currentTimeMillis() + reason.getTime()), true)
-                                    .addField("Provas:", "Nenhuma", true)
-                    );
+                try {
+                    Statement statement1 = MySQLDatabase.getInstance().getConnection().createStatement();
+                    ResultSet resultSet1 = statement1.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "' AND type='BAN'");
+                    Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
 
-                    try {
-                        webhook.execute();
-                    } catch (IOException e) {
-                        Main.getInstance().getLogger().severe(e.getStackTrace().toString());
+                    ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2 WHERE playerName='" + args[0] + "' AND type='BAN'");
+
+                        if (!(resultSet2.next() && resultSet1.next())) {
+                            apply(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                            if (reason.getPunishType() == PunishType.MUTE) {
+                                punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
+                            } else if (reason.getPunishType() == PunishType.BAN) {
+                                punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
+                            }
+                            if (reason.getPunishType() == PunishType.TEMPMUTE) {
+                                punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPMUTE.name());
+                            }
+                            if (reason.getPunishType() == PunishType.TEMPBAN) {
+                                punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPBAN.name());
+                            }
+                            Webhook webhook = new Webhook(webhookURL);
+                            webhook.addEmbed(
+                                    new Webhook.EmbedObject()
+                                            .setDescription("Um usuário foi punido do servidor.")
+                                            .setThumbnail("https://mc-heads.net/avatar/" + targetName + "/500")
+                                            .setColor(Color.decode("#00A8FF"))
+                                            .addField("Usuário:", targetName, true)
+                                            .addField("Motivo:", reason.getText(), true)
+                                            .addField("Staffer:", sender.getName(), true)
+                                            .addField("Duração:", reason.getTime() == 0 ? "Permanente" : Util.fromLongWithoutDiff(reason.getTime()), true)
+                                            .addField("Tipo:", reason.getPunishType().getText(), true)
+                                            .addField("Expira em:", reason.getTime() == 0 ? "Nunca" : SDF.format(System.currentTimeMillis() + reason.getTime()), true)
+                                            .addField("Provas:", "Nenhuma", true)
+                            );
+
+                            try {
+                                webhook.execute();
+                            } catch (IOException e) {
+                                Main.getInstance().getLogger().severe(e.getStackTrace().toString());
+                            }
+                            sender.sendMessage(TextComponent.fromLegacyText("§ePunição aplicada com sucesso."));
+                            sender.sendMessage("§bYEAH!");
+
+                    } else{
+                        sender.sendMessage(TextComponent.fromLegacyText("§4Este jogador já está punido. Despuna ele para punir por outro motivo"));
                     }
-                    sender.sendMessage(TextComponent.fromLegacyText("§ePunição aplicada com sucesso."));
-                } else {
-                    sender.sendMessage(TextComponent.fromLegacyText("§cEste jogador já está punido por este motivo."));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             } else {
                 sender.sendMessage(TextComponent.fromLegacyText("§cVocê não tem permissão para punir sem prova."));
@@ -191,18 +207,30 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
             }
             if (reason != Reason.CONTA_ALTERNATIVA) {
                 if (!proof.startsWith("https://")) {
-                    sender.sendMessage(TextComponent.fromLegacyText("§cToda prova deve começar com §fhttps://§c."));
+                    sender.sendMessage(TextComponent.fromLegacyText("§cToda prova deve começar com §fhttps://. §c."));
                     return;
                 }
             }
 
-            if (sender.hasPermission("wpunish.type." + reason.getPunishType().name().replace("TEMP", "").toLowerCase())) {
-                if (punishDao.getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equalsIgnoreCase(targetName)).filter(punish -> punish.getReason() == reason).noneMatch(Punish::isLocked)) {
-                    apply(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().getText()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+            if (!sender.hasPermission("wpunish.type." + reason.getPunishType().name().replace("TEMP", "").toLowerCase())) {
+                sender.sendMessage(TextComponent.fromLegacyText("§cVocê não tem permissão para executar esta punição."));
+                return;
+            } else {
+                try {
+                    Statement statement1 = MySQLDatabase.getInstance().getConnection().createStatement();
+                    ResultSet resultSet1 = statement1.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "' AND type='BAN'");
+                    Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
+
+                    ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2 WHERE playerName='" + args[0] + "' AND type='BAN'");
+                    if (!(resultSet2.next() && resultSet1.next()))
+                        apply(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().getText()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                    else if (resultSet1.next() && resultSet2.next()) {
+                        sender.sendMessage(ChatColor.RED + "Esse jogador já tem um banimento ativo, revogue a punição para aplicar outra");
+                        return;
+                    }
                     if (reason.getPunishType() == PunishType.MUTE) {
                         punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
-                    }
-                    else if (reason.getPunishType() == PunishType.BAN) {
+                    } else if (reason.getPunishType() == PunishType.BAN) {
                         punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
                     }
                     if (reason.getPunishType() == PunishType.TEMPMUTE) {
@@ -229,15 +257,19 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
                     } catch (IOException e) {
                         Main.getInstance().getLogger().severe(e.getStackTrace().toString());
                     }
-                    sender.sendMessage(TextComponent.fromLegacyText("§ePunição aplicada com sucesso."));
-                } else {
-                    sender.sendMessage(TextComponent.fromLegacyText("§cEste jogador já está punido por este motivo."));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-            } else {
-                sender.sendMessage(TextComponent.fromLegacyText("§cVocê não tem permissão para executar esta punição."));
+                sender.sendMessage(TextComponent.fromLegacyText("§ePunição aplicada com sucesso."));
+                sender.sendMessage("§aYEAH!");
             }
-        }
-    }
+        } else {
+                sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador já está banido! Revogue a punição para aplicar outra."));
+            }
+
+            }
+
+
 
     private static void apply(Punish punish, ProxiedPlayer target, String staffer) {
         final String textString;

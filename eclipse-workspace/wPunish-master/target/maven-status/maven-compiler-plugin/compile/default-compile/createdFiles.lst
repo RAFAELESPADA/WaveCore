@@ -15,9 +15,11 @@ dev\wplugins\waze\gerementions\commands\cmd\RevogarCommand.class
 dev\wplugins\waze\gerementions\Reports\ReportesCommand.class
 dev\wplugins\waze\gerementions\commands\Commands.class
 dev\wplugins\waze\gerementions\Reports\ReportImpl.class
+dev\wplugins\waze\gerementions\listeners\BukkitListener$1.class
 dev\wplugins\waze\gerementions\model\ModelCreateFailure.class
 dev\wplugins\waze\gerementions\util\Webhook$1.class
 dev\wplugins\waze\gerementions\Reports\ReportarCommand.class
+dev\wplugins\waze\gerementions\listeners\Listeners$2.class
 dev\wplugins\waze\gerementions\punish\dao\PunishDao.class
 dev\wplugins\waze\gerementions\commands\cmd\DespunirIDCommand.class
 dev\wplugins\waze\gerementions\enums\reason\ReasonSpigot.class
@@ -46,6 +48,7 @@ dev\wplugins\waze\gerementions\database\StorageConnection.class
 dev\wplugins\waze\gerementions\punish\service\PunishSpigot.class
 dev\wplugins\waze\gerementions\util\Webhook$EmbedObject$Field.class
 dev\wplugins\waze\gerementions\util\Webhook$EmbedObject$Author.class
+dev\wplugins\waze\gerementions\listeners\Listeners$1.class
 dev\wplugins\waze\gerementions\model\Model.class
 dev\wplugins\waze\gerementions\util\Webhook$EmbedObject$Footer.class
 dev\wplugins\waze\gerementions\commands\cmd\CheckPunirCommand.class

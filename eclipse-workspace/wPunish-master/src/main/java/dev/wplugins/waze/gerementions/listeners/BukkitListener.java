@@ -5,13 +5,16 @@ import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.database.MySQLDatabase;
 import dev.wplugins.waze.gerementions.punish.Punish;
 import dev.wplugins.waze.gerementions.punish.dao.PunishDao;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.*;
+import org.bukkit.plugin.Plugin;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,6 +22,7 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 
 public class BukkitListener implements Listener {
     private PunishDao punishDao;
@@ -32,66 +36,74 @@ public class BukkitListener implements Listener {
     @EventHandler
     public void login(PlayerLoginEvent event) {
         String name = event.getPlayer().getName();
-BukkitMain.getPlugin().getLogger().info("[WPunish] " + name +  " entrou");
-        punishDao.clearPunishes2(name);
-        try {
+        Bukkit.getScheduler().runTask((Plugin) BukkitMain.getPlugin(), new Runnable() {
+            public void run() {
+                try {
+                    Bukkit.getConsoleSender().sendMessage(name + " está entrando na rede!");
+BukkitMain.getPlugin().getLogger().log(Level.FINE, name + " está entrando na rede!");
+                    Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
+                    ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + name + "' AND (type='BAN' OR type='Banimento temporário' OR type='TEMPBAN')");
+                    if (resultSet2.next()) {
+                        BukkitMain.getPlugin().getLogger().info(name + " está banido do servidor até " + SDF.format(System.currentTimeMillis() + (resultSet2.getLong("expires"))));
+                        String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
+                        String message = "\n[BANIMENTO] \n§cVocê está banido do servidor. \n§cStaffer que te baniu: §e" + resultSet2.getString("stafferName")  + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(System.currentTimeMillis() + (resultSet2.getLong("expires"))));
 
-            Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
-            ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2 WHERE playerName= '" + name + "' AND type='BAN'");
-        if (resultSet2.next()) {
-            BukkitMain.getPlugin().getLogger().info(name + " está banido do servidor até " + SDF.format(System.currentTimeMillis() +  (resultSet2.getLong("expires"))));
-            String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
-            String message =  "\n§cVocê está banido do servidor." + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(System.currentTimeMillis() + (resultSet2.getLong("expires"))));
+                        event.disallow(PlayerLoginEvent.Result.KICK_OTHER, message);
+                        event.setResult(PlayerLoginEvent.Result.KICK_OTHER);event.getPlayer().kickPlayer(message);
+                    }
 
-            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, message);
-            event.setResult(PlayerLoginEvent.Result.KICK_BANNED);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
 
-    }
-    } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+            }
+        });
     }
         @EventHandler
-    public void chat(PlayerChatEvent event) {
+    public void chat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        BukkitMain.getPlugin().getLogger().log(Level.FINE, event.getPlayer().getName() + " -> " + event.getMessage());
+            Bukkit.getConsoleSender().sendMessage(player.getName() + " ESTÁ FALANDO NO CHAT");
+                {try {
+                                Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
+                                ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player.getName() + "' AND (type='MUTE' OR type='Mute temporário' OR type='TEMPMUTE')");
 
-            Bukkit.getServer().getOnlinePlayers().stream().filter(player -> player.getAddress().equals(event.getPlayer().getAddress())).findAny().ifPresent(player -> {
-                punishDao.clearPunishes(player.getName());
+                                if (resultSet2.next()) {
 
-                Statement statement2 = null;
-                try {
-                    statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
-                    ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2 WHERE playerName='" + player.getName() + "' AND type='MUTE'");
+                                    event.setMessage(ChatColor.RED + "[MUTE] Você está mutado! \n§cStaffer que te mutou: §e" + resultSet2.getString("stafferName")  + ChatColor.RED + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(System.currentTimeMillis() + (resultSet2.getLong("expires")))));
+                                    event.setCancelled(true);
+                                    List<String> commands = Arrays.asList("/tell", "/g", "/r", "/c", "/lobby", "/p", "/s");
 
+                                String message = event.getMessage();
 
-                        List<String> commands = Arrays.asList("/tell", "/g", "/r", "/c", "/lobby", "/p", "/s");
-
-                        String message = event.getMessage();
-
-                        if (event.getMessage().startsWith("/")) {
-                            if (commands.stream().noneMatch(s -> message.startsWith(s) || message.startsWith(s.toUpperCase()) || message.equalsIgnoreCase(s))) {
-                                event.setCancelled(false);
-                                return;
-                            }
-                            if (message.startsWith("/report") || message.startsWith("/s") || message.startsWith("/c") || message.startsWith("/reportar") ||
-                                    message.equalsIgnoreCase("/lobby") ||
-                                    message.startsWith("/logar") || message.startsWith("/login") ||
-                                    message.startsWith("/registrar") || message.startsWith("/register") || message.equalsIgnoreCase("/rejoin") ||
-                                    message.equalsIgnoreCase("/reentrar") || message.equalsIgnoreCase("/leave") || message.equalsIgnoreCase("/loja") || message.equalsIgnoreCase("/party aceitar")) {
-                                event.setCancelled(false);
-                                return;
-
-                            }
-                        }
-                        if (resultSet2.next()) {
-                            event.setMessage(ChatColor.RED + "Você está mutado!" + ChatColor.RED + " Tempo: " + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(System.currentTimeMillis() + (resultSet2.getLong("expires")))));
-                            event.setCancelled(true);
+                                if (event.getMessage().startsWith("/")) {
+                                    if (commands.stream().noneMatch(s -> message.startsWith(s) || message.startsWith(s.toUpperCase()) || message.equalsIgnoreCase(s))) {
+                                        event.setCancelled(false);
+                                        return;
+                                    }
+                                    if (message.startsWith("/report") || message.startsWith("/s") || message.startsWith("/c") || message.startsWith("/reportar") ||
+                                            message.equalsIgnoreCase("/lobby") ||
+                                            message.startsWith("/logar") || message.startsWith("/login") ||
+                                            message.startsWith("/registrar") || message.startsWith("/register") || message.equalsIgnoreCase("/rejoin") ||
+                                            message.equalsIgnoreCase("/reentrar") || message.equalsIgnoreCase("/leave") || message.equalsIgnoreCase("/loja") || message.equalsIgnoreCase("/party aceitar")) {
+                                        event.setCancelled(false);
+                                        return;
+                                    }
+                                    resultSet2.close();
 
 
-                        }
-                } catch (SQLException e1){
-                    throw new RuntimeException(e1);
-                }});
-}}
+                                }
+                                }
+                        } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+                    ;
+                    }
+
+                }
+
+        }
 
 
 
