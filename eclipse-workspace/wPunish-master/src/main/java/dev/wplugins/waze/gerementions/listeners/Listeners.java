@@ -65,14 +65,14 @@ public class Listeners implements Listener {
                             String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
                             event.setCancelReason(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê está banido do servidor.\n" +
                                     "\n§cMotivo: " + r.getText() + " - " + proof +
-                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires") +
+                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires")) +
                                     "\n§cID da punição: §e#" + resultSet2.getString("id") +
-                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")))));
+                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
                             event.getConnection().disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê está banido do servidor.\n" +
                                     "\n§cMotivo: " + r.getText() + " - " + proof +
-                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires") +
+                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires")) +
                                     "\n§cID da punição: §e#" + resultSet2.getString("id") +
-                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")))));
+                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
                             return;
                         } else {
                             Main.getInstance().getLogger().log(Level.FINE
@@ -123,14 +123,14 @@ public class Listeners implements Listener {
                             String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
                             event.setCancelReason(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê está banido do servidor.\n" +
                                     "\n§cMotivo: " + r.getText() + " - " + proof +
-                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires") +
+                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires")) +
                                     "\n§cID da punição: §e#" + resultSet2.getString("id") +
-                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")))));
+                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
                             event.getConnection().disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê está banido do servidor.\n" +
                                     "\n§cMotivo: " + r.getText() + " - " + proof +
-                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires") +
+                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires")) +
                                     "\n§cID da punição: §e#" + resultSet2.getString("id") +
-                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§")))));
+                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
                             return;
                         } else {
                             Main.getInstance().getLogger().log(Level.FINE
