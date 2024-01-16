@@ -7,6 +7,7 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -30,7 +31,7 @@ public class MySQLDatabase extends Database {
             this.host = Main.getInstance().getConfig().getString("database.mysql.host");
             this.port = Main.getInstance().getConfig().getString("database.mysql.porta");
             this.database = Main.getInstance().getConfig().getString("database.mysql.nome");
-            this.username = Main.getInstance().getConfig().getString("database.mysql.usuario");
+            this.username = Main.getInstance().getConfig().getString("database.mysql.user");
             this.password = Main.getInstance().getConfig().getString("database.mysql.senha");
         } else {
 
@@ -57,10 +58,16 @@ public class MySQLDatabase extends Database {
                 }
 
                 if (instancia == PluginInstance.BUNGEECORD) {
-                    //jdbc:mysql://u1573_o3nKwl3hpf:L%3DoCfWF!%40SY7E64WYOUFp%2BEg@node18.elgaehost.com.br:3306/s1573_PUNISH
+
                     connection2 = DriverManager.getConnection(rei);
                 } else {
-                    connection2 =  DriverManager.getConnection("jdbc:mysql://" + BukkitMain.getPlugin().getConfig().getString("database.host") + ":" + BukkitMain.getPlugin().getConfig().getString("database.porta") + "/" + BukkitMain.getPlugin().getConfig().getString("database.nome"), BukkitMain.getPlugin().getConfig().getString("database.user"), BukkitMain.getPlugin().getConfig().getString("database.senha"));
+                    Properties props = new Properties();
+                    props.put("autoReconnect", "true");
+                    props.put("failOverReadOnly" , "false");
+                    props.put("maxReconnects" , "10");
+                    props.put("user", BukkitMain.getPlugin().getConfig().getString("database.user"));
+                    props.put("password", BukkitMain.getPlugin().getConfig().getString("database.senha"));
+                    connection2 =  DriverManager.getConnection("jdbc:mysql://" + BukkitMain.getPlugin().getConfig().getString("database.host") + "/" + BukkitMain.getPlugin().getConfig().getString("database.nome"), props);
 
                 }
 

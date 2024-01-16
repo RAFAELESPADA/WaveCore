@@ -20,6 +20,7 @@ import java.util.logging.Level;
 
 public class BukkitMain extends JavaPlugin {
     private Configuration config;
+    private static BukkitMain instance;
     private PunishDao punishDao;
 
     public static BukkitMain getPlugin() {
@@ -34,6 +35,7 @@ public class BukkitMain extends JavaPlugin {
         punishDao = new PunishDao();
         Database.setupDatabase();
         punishDao.loadPunishes();
+        instance = this;
         MySQLDatabase.instancia = PluginInstance.SPIGOT;
         this.getLogger().info("§aEste plugin foi ativo com sucesso");
         PluginManager pm = Bukkit.getPluginManager();
@@ -45,6 +47,9 @@ public class BukkitMain extends JavaPlugin {
         return config;
     }
 
+    public static BukkitMain getInstance() {
+        return instance;
+    }
 
 
 

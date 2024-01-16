@@ -47,7 +47,7 @@ public class Listeners implements Listener {
         BungeeCord.getInstance().getScheduler().schedule(Main.getInstance(), new Runnable() {
             public void run() {
 
-                 if (punishDao.isBanned(name)) {
+                {
                     try {
 
 
@@ -105,7 +105,7 @@ public class Listeners implements Listener {
         BungeeCord.getInstance().getScheduler().schedule(Main.getInstance(), new Runnable() {
             public void run() {
 
-                 if (punishDao.isBanned(name)) {
+                {
                     try {
 
 
