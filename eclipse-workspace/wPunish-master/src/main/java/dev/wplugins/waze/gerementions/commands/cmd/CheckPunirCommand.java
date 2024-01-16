@@ -59,10 +59,10 @@ public class CheckPunirCommand extends Commands {
                     sender.sendMessage(TextComponent.fromLegacyText("\n§a\uD83D\uDFE9 Ativo §c\uD83D\uDFE5 Finalizado \n"));
                     List<String> components = new ArrayList<>();
 
-                    TextComponent component = new TextComponent("§a§l[§a" + SDF.format(System.currentTimeMillis() + resultSet1.getLong("expires")) + "§a§l]");
+                    TextComponent component = new TextComponent("§a§l[§a" + SDF.format(resultSet1.getLong("expires")) + "§a§l]");
                     for (BaseComponent baseComponent : TextComponent.fromLegacyText("§a§l[§a" + resultSet1.getString("reason") + "§a§l]")) {
                         component.addExtra(baseComponent);
-                        baseComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§6ID: §7#" + resultSet1.getString("id") + "\n§6Nick: §7" + resultSet1.getString("playerName") + "\n§6Quem puniu: §7" + resultSet1.getString("stafferName") + "\n\n§6Tipo: §7" + resultSet1.getString("type") + "\n§6Data de início: §7" + SDF.format(System.currentTimeMillis() + resultSet1.getLong("expires")) + "\n§6Data de fim: §7" + SDF.format(System.currentTimeMillis() + resultSet1.getLong("date")) + "\n§6Categoria: §7" + resultSet1.getString("reason") + "\n§6Motivo: §7" + resultSet1.getString("reason") + "\n§6Prova: §7" + (resultSet1.getString("proof") == null ? "§7Sem prova" : resultSet1.getString("proof") + "\n§6Punido até: " + SDF.format((System.currentTimeMillis() + resultSet1.getLong("expires")))))));
+                        baseComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§6ID: §7#" + resultSet1.getString("id") + "\n§6Nick: §7" + resultSet1.getString("playerName") + "\n§6Quem puniu: §7" + resultSet1.getString("stafferName") + "\n\n§6Tipo: §7" + resultSet1.getString("type") + "\n§6Data de início: §7" + SDF.format(resultSet1.getLong("expires")) + "\n§6Data de fim: §7" + SDF.format(resultSet1.getLong("date")) + "\n§6Categoria: §7" + resultSet1.getString("reason") + "\n§6Motivo: §7" + resultSet1.getString("reason") + "\n§6Prova: §7" + (resultSet1.getString("proof") == null ? "§7Sem prova" : resultSet1.getString("proof") + "\n§6Punido até: §7" + SDF.format((resultSet1.getLong("date")))))));
                     }
                     for (BaseComponent baseComponents : TextComponent.fromLegacyText(" §f§l[§fRevogar§f§l]")) {
                         component.addExtra(baseComponents);
