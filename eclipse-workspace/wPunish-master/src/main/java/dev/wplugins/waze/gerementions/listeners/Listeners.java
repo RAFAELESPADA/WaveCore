@@ -155,6 +155,21 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void chat(ChatEvent event) {
+        String evmessage = event.getMessage();
+
+        if (evmessage.contains("/report") || evmessage.startsWith("/report") && event.isCommand()) {
+            return;
+        }
+
+        if (evmessage.contains("/glist") || evmessage.startsWith("/glist") && event.isCommand()) {
+            return;
+        }
+        if (evmessage.contains("/rejoin") || evmessage.startsWith("/rejoin") && event.isCommand()) {
+            return;
+        }
+        if (evmessage.contains("/rewards") || evmessage.startsWith("/reward") && event.isCommand()) {
+            return;
+        }
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         try {
             BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " -> " + event.getMessage());
@@ -165,16 +180,17 @@ public class Listeners implements Listener {
 
             Statement statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
             ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player.getName() + "'");
-            List<String> commands = Arrays.asList("/tell", "/g", "/r", "/c", "/lobby", "/p", "/s");
+            List<String> commands = Arrays.asList("/tell", "/g", "/r");
+            if (!resultSet2.next() || !resultSet3.next()) {
+                return;
+            }
             if (event.isCommand()) {
 
                 if (commands.stream().noneMatch(s -> message.startsWith(s) || message.startsWith(s.toUpperCase()) || message.equalsIgnoreCase(s))) {
                     event.setCancelled(false);
                     return;
                 }
-            }
-
-            if (message.startsWith("/report") || message.startsWith("/s") || message.startsWith("/c") || message.startsWith("/reportar") ||
+            } else if (message.startsWith("/report") || message.startsWith("/s") || message.startsWith("/c") || message.startsWith("/reportar") ||
                     message.equalsIgnoreCase("/lobby") ||
                     message.startsWith("/logar") || message.startsWith("/login") || message.equalsIgnoreCase("/rejoin") ||
                     message.equalsIgnoreCase("/reentrar") || message.equalsIgnoreCase("/leave") || message.equalsIgnoreCase("/loja") || message.equalsIgnoreCase("/party aceitar")) {
@@ -182,14 +198,26 @@ public class Listeners implements Listener {
                 return;
 
             }
-            if (resultSet2.next()  && resultSet3.next()) {
+            String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
 
 
-                String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
+            BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
+            Reason r = Reason.valueOf(resultSet3.getString("reason"));
+            player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
+                    "\n\n§c* Motivo: " + r.getText() + " - " + proof +
+                    "\n§c* Autor: " + resultSet2.getString("stafferName") +
+                    "\n§c* Use o ID §e#" + String.valueOf(resultSet2.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
+                    "\n"));
+
+
+            event.setCancelled(true);
+            BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because is muted.");
+            if (!event.isCommand()) {
+
+
 
 
                 BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
-                Reason r = Reason.valueOf(resultSet3.getString("reason"));
                 player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
                         "\n\n§c* Motivo: " + r.getText() + " - " + proof +
                         "\n§c* Autor: " + resultSet2.getString("stafferName") +
