@@ -18,7 +18,10 @@ import dev.wplugins.waze.gerementions.punish.service.impl.PunishServiceImpl;
 import dev.wplugins.waze.gerementions.punish.service.impl.PunishServiceImpl2;
 import dev.wplugins.waze.gerementions.thread.PunishThread;
 import lombok.Getter;
+import net.md_5.bungee.BungeeCord;
+import org.bukkit.entity.Player;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,6 +34,7 @@ public class PunishDao {
     private final PunishThread thread;
     @Getter
     private final PunishService punishService;
+    int sequence = 1;
     @Getter
     private final PunishServiceSpigot punishService2;
     @Getter
@@ -55,24 +59,29 @@ public class PunishDao {
     }
 
 
-    public Punish createPunish(String targetName, String stafferName, Reason reason, String proof, String type) {
-        Punish punish = Punish.builder().id(UUID.randomUUID().toString().substring(0, 6)).playerName(targetName).stafferName(stafferName).reason(reason).type(type).proof(proof).date(new Date().getTime()).expire((reason.getTime() != 0 ? (System.currentTimeMillis() + reason.getTime()) : 0)).build();
+    public Punish createPunish(String targetName, String stafferName, Reason reason, String proof, String type, int idreal) {
+        Punish punish = Punish.builder().id(UUID.randomUUID().toString().substring(0, 6)).playerName(targetName).stafferName(stafferName).reason(reason).type(type).proof(proof).date(new Date().getTime()).expire((reason.getTime() != 0 ? (System.currentTimeMillis() + reason.getTime()) : 0)).idpenis(punishService.getPunishes().size()).build();
         CompletableFuture.runAsync(() -> {
 
             while (getPunishService().getPunishes().stream().anyMatch(p -> p.getId().equals(punish.getId()))) {
                 punish.setId(UUID.randomUUID().toString().substring(0, 6));
-            }
-            punishService.create(punish);
-            lastHourPunishes.add(punish);
 
-            Database.getInstance().execute("INSERT INTO `wPunish` VALUES (?, ?, ?, ?, ?, ?, ?, ?)", punish.getId(), punish.getPlayerName(), punish.getStafferName(), punish.getReason().name(), punish.getType(), punish.getProof(), punish.getDate(), punish.getExpire());
-            Main.getInstance().getLogger().info("Nova punição salva" + stafferName + " puniu " + targetName);
+            }
+            punish.setIdpenis(punishService.getPunishes().size());
+
+            punishService.getPunishes().add(punish);
+            lastHourPunishes.add(punish);
+            Database.getInstance().execute("INSERT INTO `wPunish` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", punish.getId(), punish.getPlayerName(), punish.getStafferName(), punish.getReason().name(), punish.getType(), punish.getProof(), punish.getDate(), punish.getExpire(), punish.getIdpenis());
+            Main.getInstance().getLogger().info("Nova punição salva " + stafferName + " puniu " + targetName);
             Main.getInstance().getLogger().info("Tipo " + type);
             Main.getInstance().getLogger().info("Motivo " + reason);
             Main.getInstance().getLogger().info("Prova " + proof);
+            Main.getInstance().getLogger().info("ID Númerico: " + idreal);
+            Main.getInstance().getLogger().info("Punições ativas: " + punishService.getPunishes().size());
         }, thread);
         return punish;
-    }
+        }
+
     public PunishSpigot createPunish2(String targetName, String stafferName, ReasonSpigot reason, String proof, String type) {
         PunishSpigot punish = PunishSpigot.builder().id(UUID.randomUUID().toString().substring(0, 6)).playerName(targetName).stafferName(stafferName).reason(reason).type(type).proof(proof).date(new Date().getTime()).expire((reason.getTime() != 0 ? (System.currentTimeMillis() + reason.getTime()) : 0)).build();
         PunishSpigot punish2 = PunishSpigot.builder().id(UUID.randomUUID().toString().substring(0, 6)).playerName(targetName).stafferName(stafferName).reason(ReasonSpigot.AMEACA).type(type).proof(proof).date(new Date().getTime()).expire((reason.getTime() != 0 ? (System.currentTimeMillis() + reason.getTime()) : 0)).build();
@@ -95,6 +104,29 @@ public class PunishDao {
         return punish2;
     }
 
+    public static int getId(Player player) {
+        try {
+            Statement statement = MySQLDatabase.getInstance().getConnection().createStatement();
+            Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM wPunish WHERE playername='" + player.getName() + "'");
+            ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2");
+            return resultSet.getInt("idreal");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public Reason getReason(String reason) {
+        try {
+            Statement statement = MySQLDatabase.getInstance().getConnection().createStatement();
+            Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM wPunish WHERE playerName='" + reason + "'");
+            return Reason.valueOf(resultSet.getString("reason"));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     public void loadPunishes() {
         try {
             Statement statement = MySQLDatabase.getInstance().getConnection().createStatement();
@@ -103,7 +135,8 @@ public class PunishDao {
             ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2");
             if (MySQLDatabase.instancia == PluginInstance.BUNGEECORD) {
                 if (resultSet.next()) {
-                    punishService.create(Punish.builder().id(resultSet.getString("id")).playerName(resultSet.getString("playerName")).stafferName(resultSet.getString("stafferName")).reason(Reason.valueOf(resultSet.getString("reason"))).proof(resultSet.getString("proof")).date(resultSet.getLong("date")).expire(resultSet.getLong("expires")).build());
+                    punishService.getPunishes().add(Punish.builder().id(resultSet.getString("id")).playerName(resultSet.getString("playerName")).stafferName(resultSet.getString("stafferName")).reason(Reason.valueOf(resultSet.getString("reason"))).proof(resultSet.getString("proof")).date(resultSet.getLong("date")).expire(resultSet.getLong("expires")).idpenis(resultSet.getInt("idreal")).build());
+                    punishService.create(Punish.builder().id(resultSet.getString("id")).playerName(resultSet.getString("playerName")).stafferName(resultSet.getString("stafferName")).reason(Reason.valueOf(resultSet.getString("reason"))).proof(resultSet.getString("proof")).date(resultSet.getLong("date")).expire(resultSet.getLong("expires")).idpenis(resultSet.getInt("idreal")).build());
                 }
             }
             if (resultSet2.next()) {
@@ -114,18 +147,18 @@ public class PunishDao {
             }
 
 
-                if (!statement.isClosed()) {
-                    statement.close();
-                }
-                if (MySQLDatabase.instancia == PluginInstance.BUNGEECORD) {
-                    Main.getInstance().getLogger().info("§ePunições ativa com sucesso.");
-                } else {
-                    BukkitMain.getPlugin().getLogger().info("§9Punições ativa com sucesso.");
-                }
-            } catch(SQLException e){
-                e.printStackTrace();
+            if (!statement.isClosed()) {
+                statement.close();
             }
+            if (MySQLDatabase.instancia == PluginInstance.BUNGEECORD) {
+                Main.getInstance().getLogger().info("§ePunições ativa com sucesso.");
+            } else {
+                BukkitMain.getPlugin().getLogger().info("§9Punições ativa com sucesso.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+    }
 
     public void disablePunish2(String id) {
         CompletableFuture.runAsync(() -> {
@@ -142,6 +175,7 @@ public class PunishDao {
             }
         }, thread);
     }
+
     public void disablePunish(String id) {
         CompletableFuture.runAsync(() -> {
             Database.getInstance().execute("DELETE FROM `wPunish` WHERE id = ?", id);
@@ -157,6 +191,7 @@ public class PunishDao {
             }
         }, thread);
     }
+
     /*public void unPunish(String id, ReasonRevogar reason) {
         try {
             Statement statement = MySQLDatabase.getInstance().getConnection().createStatement();
@@ -175,20 +210,54 @@ public class PunishDao {
     public void clearPunishes(String player) {
         getPunishService().getPunishes().stream().filter(punish -> punish.getPlayerName().equals(player)).filter(punish -> punish.getExpire() > 0 && (System.currentTimeMillis() >= punish.getExpire())).forEach(punish -> disablePunish(punish.getId()));
     }
+
     public void clearPunishes2(String player) {
         getPunishService2().getPunishes().stream().filter(punish -> punish.getPlayerName().equals(player)).filter(punish -> punish.getExpire() > 0 && (System.currentTimeMillis() >= punish.getExpire())).forEach(punish -> disablePunish(punish.getId()));
     }
 
-    public Stream<Punish> isBanned(String player) {
-        return punishService.getPunishes().stream().filter(punish -> punish.getPlayerName().equals(player)).filter(punish -> punish.getReason().getPunishType() == PunishType.TEMPBAN || punish.getReason().getPunishType() == PunishType.BAN).filter(Punish::isLocked);
+    public boolean isBanned(String player) {
+        Statement statement2 = null;
+        try {
+            statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
+            ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player + "' AND (type='BAN' OR type='TEMPBAN' OR type='Banimento temporário')");
+
+            return resultSet2.next();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
+
+
     public Stream<PunishSpigot> isBannedSpigot(String player) {
         return punishService2.getPunishes().stream().filter(punish -> punish.getPlayerName().equals(player)).filter(punish -> punish.getReason().getPunishType() == PunishType.TEMPBAN || punish.getReason().getPunishType() == PunishType.BAN).filter(PunishSpigot::isLocked);
     }
 
     public Stream<Punish> isMuted(String player) {
-        return punishService.getPunishes().stream().filter(punish -> punish.getPlayerName().equals(player)).filter(punish -> punish.getReason().getPunishType() == PunishType.TEMPMUTE || punish.getReason().getPunishType() == PunishType.MUTE).filter(Punish::isLocked);
+        Statement statement2 = null;
+        try {
+            statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
+            ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player + "' AND (type='TEMPMUTE' OR type='MUTE' OR type='Mute temporário')");
+            if (resultSet2.next()) {
+                punishService.getPunishes().stream().filter(punish -> {
+                    try {
+
+                        BungeeCord.getInstance().getConsole().sendMessage("[MUTES]" + player + " está no meu banco de dados de mutes!");
+                        return punish.getPlayerName().equalsIgnoreCase(resultSet2.getString("playerName"));
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
     }
+
+
     public Stream<PunishSpigot> isMutedSpigot(String player) {
         return punishService2.getPunishes().stream().filter(punish -> punish.getPlayerName().equals(player)).filter(punish -> punish.getReason().getPunishType() == PunishType.TEMPMUTE || punish.getReason().getPunishType() == PunishType.MUTE).filter(PunishSpigot::isLocked);
     }

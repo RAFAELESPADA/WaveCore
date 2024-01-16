@@ -9,8 +9,10 @@ import lombok.Setter;
 @Builder
 public class Punish {
 
+
     @Setter
     private String id;
+    private Integer idpenis;
     private final String playerName, stafferName, proof, type;
     private final long date, expire;
     private final Reason reason;
@@ -20,5 +22,9 @@ public class Punish {
             return (System.currentTimeMillis() < expire);
         }
         return true;
+    }
+
+    public void setIdpenis(Integer newa) {
+        idpenis = newa;
     }
 }

@@ -41,7 +41,11 @@ public class PunirCommand extends Commands {
     private String webhookURL = "https://discord.com/api/webhooks/1181247723660394546/jif9m6zF5-Gylit7op4vZGX2CyEP0JiBkCKxwOOVjrvv4_JtRZsjPXUjzly6Ffi94KDg";
     SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private static PunishDao punishDao;
+    int sequence = 0;
 
+    static {
+        punishDao = Main.getInstance().getPunishDao();
+    }
     @Override
     public void perform(CommandSender sender, String[] args) {
         if (!(sender instanceof ProxiedPlayer)) {
@@ -62,14 +66,14 @@ public class PunirCommand extends Commands {
 
         if (args.length == 1) {
             String targetName = args[0];
-ProxiedPlayer target = BungeeCord.getInstance().getPlayer(targetName);
+            ProxiedPlayer target = BungeeCord.getInstance().getPlayer(targetName);
 
-if (BungeeCord.getInstance().getPlayer(targetName) != null) {
-    if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
-        sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
-        return;
-    }
-}
+            if (BungeeCord.getInstance().getPlayer(targetName) != null) {
+                if (target.hasPermission("wpunish.ignorar") && !sender.hasPermission("wpunish.ignorar.bypass")) {
+                    sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador tem um nível de permissão maior que o seu."));
+                    return;
+                }
+            }
             if (targetName.equals(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText("§cVocê não pode se punir."));
                 return;
@@ -78,7 +82,6 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
                 sender.sendMessage(TextComponent.fromLegacyText("§cVocê não pode punir este jogador."));
                 return;
             }
-
 
 
             sender.sendMessage(TextComponent.fromLegacyText("§eTipos de infração disponíveis:\n"));
@@ -135,24 +138,28 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
             if (sender.hasPermission("wpunir.punirsemprova")) {
                 try {
                     Statement statement1 = MySQLDatabase.getInstance().getConnection().createStatement();
+
                     ResultSet resultSet1 = statement1.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "' AND type='BAN'");
                     Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
 
                     ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2 WHERE playerName='" + args[0] + "' AND type='BAN'");
-
-                        if (!(resultSet2.next() && resultSet1.next())) {
-                            apply(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
-                            if (reason.getPunishType() == PunishType.MUTE) {
-                                punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
-                            } else if (reason.getPunishType() == PunishType.BAN) {
-                                punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
-                            }
-                            if (reason.getPunishType() == PunishType.TEMPMUTE) {
-                                punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPMUTE.name());
-                            }
-                            if (reason.getPunishType() == PunishType.TEMPBAN) {
-                                punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPBAN.name());
-                            }
+                    if (resultSet1.next()) {
+                        sender.sendMessage("§cEsse jogador já está banido permanentemente!");
+                        return;
+                } else {
+                        apply(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name(), sequence++), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                        if (reason.getPunishType() == PunishType.MUTE) {
+                            punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
+                        } else if (reason.getPunishType() == PunishType.BAN) {
+                            punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
+                        }
+                        if (reason.getPunishType() == PunishType.TEMPMUTE) {
+                            punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPMUTE.name());
+                        }
+                        if (reason.getPunishType() == PunishType.TEMPBAN) {
+                            punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPBAN.name());
+                        }
+                        {
                             Webhook webhook = new Webhook(webhookURL);
                             webhook.addEmbed(
                                     new Webhook.EmbedObject()
@@ -170,14 +177,14 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
 
                             try {
                                 webhook.execute();
+
                             } catch (IOException e) {
                                 Main.getInstance().getLogger().severe(e.getStackTrace().toString());
                             }
-                            sender.sendMessage(TextComponent.fromLegacyText("§ePunição aplicada com sucesso."));
-                            sender.sendMessage("§bYEAH!");
+                        }
+                        sender.sendMessage(TextComponent.fromLegacyText("§ePunição aplicada com sucesso."));
+                        sender.sendMessage("§bYEAH!");
 
-                    } else{
-                        sender.sendMessage(TextComponent.fromLegacyText("§4Este jogador já está punido. Despuna ele para punir por outro motivo"));
                     }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
@@ -207,7 +214,7 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
             }
             if (reason != Reason.CONTA_ALTERNATIVA) {
                 if (!proof.startsWith("https://")) {
-                    sender.sendMessage(TextComponent.fromLegacyText("§cToda prova deve começar com §fhttps://. §c."));
+                    sender.sendMessage(TextComponent.fromLegacyText("§cToda prova deve começar com §fhttps:// §c."));
                     return;
                 }
             }
@@ -222,52 +229,50 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
                     Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
 
                     ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2 WHERE playerName='" + args[0] + "' AND type='BAN'");
-                    if (!(resultSet2.next() && resultSet1.next()))
-                        apply(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().getText()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
-                    else if (resultSet1.next() && resultSet2.next()) {
-                        sender.sendMessage(ChatColor.RED + "Esse jogador já tem um banimento ativo, revogue a punição para aplicar outra");
+                    if (resultSet1.next()) {
+                        sender.sendMessage("§cEsse jogador já está banido permanentemente! Despuna para punir por outro motivo.");
                         return;
+                    } else {
+                        apply(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().name(), sequence++), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                        if (reason.getPunishType() == PunishType.MUTE) {
+                            punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
+                        } else if (reason.getPunishType() == PunishType.BAN) {
+                            punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
+                        }
+                        if (reason.getPunishType() == PunishType.TEMPMUTE) {
+                            punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPMUTE.name());
+                        }
+                        if (reason.getPunishType() == PunishType.TEMPBAN) {
+                            punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPBAN.name());
+                        }
+                        Webhook webhook = new Webhook(webhookURL);
+                        webhook.addEmbed(
+                                new Webhook.EmbedObject()
+                                        .setDescription("Um usuário foi punido do servidor.")
+                                        .setThumbnail("https://mc-heads.net/avatar/" + targetName + "/500")
+                                        .setColor(Color.decode("#00A8FF"))
+                                        .addField("Usuário:", targetName, true)
+                                        .addField("Motivo:", reason.getText(), true)
+                                        .addField("Staffer:", sender.getName(), true)
+                                        .addField("Duração:", reason.getTime() == 0 ? "Permanente" : Util.fromLongWithoutDiff(reason.getTime()), false)
+                                        .addField("Tipo:", reason.getPunishType().getText(), true)
+                                        .addField("Expira em:", reason.getTime() == 0 ? "Nunca" : SDF.format(System.currentTimeMillis() + reason.getTime()), true)
+                                        .addField("Provas:", proof, true)
+                        );
+                        try {
+                            webhook.execute();
+                        } catch (IOException e) {
+                            Main.getInstance().getLogger().severe(e.getStackTrace().toString());
+                        }
                     }
-                    if (reason.getPunishType() == PunishType.MUTE) {
-                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
-                    } else if (reason.getPunishType() == PunishType.BAN) {
-                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
-                    }
-                    if (reason.getPunishType() == PunishType.TEMPMUTE) {
-                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPMUTE.name());
-                    }
-                    if (reason.getPunishType() == PunishType.TEMPBAN) {
-                        punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.TEMPBAN.name());
-                    }
-                    Webhook webhook = new Webhook(webhookURL);
-                    webhook.addEmbed(
-                            new Webhook.EmbedObject()
-                                    .setDescription("Um usuário foi punido do servidor.")
-                                    .setThumbnail("https://mc-heads.net/avatar/" + targetName + "/500")
-                                    .setColor(Color.decode("#00A8FF"))
-                                    .addField("Usuário:", targetName, true)
-                                    .addField("Motivo:", reason.getText(), true)
-                                    .addField("Duração:", reason.getTime() == 0 ? "Permanente" : Util.fromLongWithoutDiff(reason.getTime()), false)
-                                    .addField("Tipo:", reason.getPunishType().getText(), true)
-                                    .addField("Expira em:", reason.getTime() == 0 ? "Nunca" : SDF.format(System.currentTimeMillis() + reason.getTime()), true)
-                                    .addField("Provas:", proof, true)
-                    );
-                    try {
-                        webhook.execute();
-                    } catch (IOException e) {
-                        Main.getInstance().getLogger().severe(e.getStackTrace().toString());
-                    }
+                    sender.sendMessage(TextComponent.fromLegacyText("§ePunição aplicada com sucesso."));
+                    sender.sendMessage("§aYEAH!");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                sender.sendMessage(TextComponent.fromLegacyText("§ePunição aplicada com sucesso."));
-                sender.sendMessage("§aYEAH!");
-            }
-        } else {
-                sender.sendMessage(TextComponent.fromLegacyText("§cEsse jogador já está banido! Revogue a punição para aplicar outra."));
             }
 
-            }
+        }}
 
 
 
@@ -378,17 +383,17 @@ if (BungeeCord.getInstance().getPlayer(targetName) != null) {
                         "\n§cID da punição: §e#" + punish.getId() +
                         "\n\n§cAcha que a punição foi aplicada injustamente?\n§cFaça uma revisão em" + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"));
             }
+
+        }}
+
+
+        private static boolean impossibleToBan(String nickName) {
+            return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.contains(nickName));
         }
     }
 
 
-    static {
-        punishDao = Main.getInstance().getPunishDao();
-    }
 
-    private static boolean impossibleToBan(String nickName) {
-        return Stream.of(Main.getInstance().getConfig().getStringList("NicksAntiBan")).anyMatch(s -> s.contains(nickName));
-    }
-}
+
 
 

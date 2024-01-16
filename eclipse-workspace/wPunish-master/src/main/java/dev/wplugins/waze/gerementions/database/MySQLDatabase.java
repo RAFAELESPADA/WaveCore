@@ -37,7 +37,7 @@ public class MySQLDatabase extends Database {
         }
         this.executor = Executors.newCachedThreadPool();
         openConnection();
-        update("CREATE TABLE IF NOT EXISTS `wPunish` (`id` VARCHAR(6), `playerName` VARCHAR(16), `stafferName` VARCHAR(16), `reason` TEXT, `type` TEXT, `proof` TEXT, `date` BIGINT(100), `expires` LONG, PRIMARY KEY(`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;");
+        update("CREATE TABLE IF NOT EXISTS `wPunish` (`id` VARCHAR(6), `playerName` VARCHAR(16) , `idreal` INT(11), `stafferName` VARCHAR(16), `reason` TEXT, `type` TEXT, `proof` TEXT, `date` BIGINT(100), `expires` LONG, PRIMARY KEY(`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;");
         update("CREATE TABLE IF NOT EXISTS `wPunish2` (`id` VARCHAR(6), `playerName` VARCHAR(16), `stafferName` VARCHAR(16), `reason` TEXT, `type` TEXT, `proof` TEXT, `date` BIGINT(100), `expires` LONG, PRIMARY KEY(`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_bin;");
     }
 

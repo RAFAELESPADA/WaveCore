@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.stream.Stream;
 
 public class BanCommand extends Commands {
+    int sequence = 0;
     public BanCommand() {
         super("ban", "vban", "banip", "ban-ip");
     }
@@ -59,7 +60,7 @@ public class BanCommand extends Commands {
                     "\n§c- Duração: Permanente\n"));
         });
         PunishDao punish = new PunishDao();
-        apply(punish.createPunish(target, sender.getName(), Reason.VIOLACAO_DAS_DIRETRIZES, null, PunishType.BAN.name()), ProxyServer.getInstance().getPlayer(target), sender.getName());
+        apply(punish.createPunish(target, sender.getName(), Reason.VIOLACAO_DAS_DIRETRIZES, null, PunishType.BAN.name(), sequence++), ProxyServer.getInstance().getPlayer(target), sender.getName());
         Webhook webhook = new Webhook(webhookURL);
         webhook.addEmbed(
                 new Webhook.EmbedObject()
