@@ -25,17 +25,16 @@ public class RevogarCommand extends Commands {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
-        String target = args[0];
+
         if (!sender.hasPermission("wpunish.despunir")) {
             sender.sendMessage(TextComponent.fromLegacyText("§cVocê não tem permissão para isso."));
             return;
         }
-        if (args.length != 1) {
+        else if (args.length != 1 || args.length == 0) {
             sender.sendMessage(TextComponent.fromLegacyText("§cUtilize /revogar <jogador>."));
             return;
-
-
         }
+        String target = args[0];
         try {
             Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
             ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "'");

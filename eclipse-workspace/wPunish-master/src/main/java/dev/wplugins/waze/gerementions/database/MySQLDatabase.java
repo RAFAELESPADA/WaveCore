@@ -48,7 +48,7 @@ public class MySQLDatabase extends Database {
                 boolean bol = connection2 == null;
                 String rei;
                 if (instancia == PluginInstance.BUNGEECORD) {
-                    Main.getInstance().getLogger().info("CONECTANDO...");
+                    Main.getInstance().getLogger().info("CONNECTING IN MYSQL...");
                     rei = Main.getInstance().getConfig().getString("database.url");
                     // Set URL for data source
                 } else {
@@ -58,8 +58,13 @@ public class MySQLDatabase extends Database {
                 }
 
                 if (instancia == PluginInstance.BUNGEECORD) {
-
-                    connection2 = DriverManager.getConnection(rei);
+                    Properties props = new Properties();
+                    props.put("autoReconnect", "true");
+                    props.put("failOverReadOnly" , "false");
+                    props.put("maxReconnects" , "12");
+                    props.put("user", Main.getInstance().getConfig().getString("database.user"));
+                    props.put("password", Main.getInstance().getConfig().getString("database.senha"));
+                    connection2 =  DriverManager.getConnection("jdbc:mysql://" + Main.getInstance().getConfig().getString("database.host") + "/" + Main.getInstance().getConfig().getString("database.nome"), props);
                 } else {
                     Properties props = new Properties();
                     props.put("autoReconnect", "true");
@@ -82,14 +87,15 @@ public class MySQLDatabase extends Database {
 
             } catch (SQLException e) {
 
-                    if (instancia == PluginInstance.BUNGEECORD) {
+                if (instancia == PluginInstance.BUNGEECORD) {
 
-                        Main.getInstance().getLogger().log(Level.SEVERE, "Could not open MySQL connection: ", e);
+                    Main.getInstance().getLogger().log(Level.SEVERE, "Could not open MySQL connection: ", e);
 
-                    }
+
+            } else {
                     BukkitMain.getPlugin().getLogger().log(Level.SEVERE, "Could not open MySQL connection: ", e);
 
-
+                }
                 } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
