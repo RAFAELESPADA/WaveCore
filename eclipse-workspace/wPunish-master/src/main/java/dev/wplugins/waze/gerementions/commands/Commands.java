@@ -24,6 +24,8 @@ public abstract class Commands extends Command {
         new CheckPunirCommand();
         new DespunirIDCommand();
         new KickCommand();
+        new ResetPunishes();
+        new StaffRollBack();
         new PunirCommand();
         new BanCommand();
         new RevogarCommand();

@@ -25,6 +25,7 @@ dev\wplugins\waze\gerementions\commands\cmd\DespunirIDCommand.class
 dev\wplugins\waze\gerementions\enums\reason\ReasonSpigot.class
 dev\wplugins\waze\gerementions\punish\service\PunishSpigot$PunishSpigotBuilder.class
 dev\wplugins\waze\gerementions\enums\reason\Reason.class
+dev\wplugins\waze\gerementions\commands\cmd\StaffRollBack.class
 dev\wplugins\waze\gerementions\enums\punish\PunishType.class
 dev\wplugins\waze\gerementions\Debug.class
 dev\wplugins\waze\gerementions\Reports\Commands.class
@@ -62,3 +63,4 @@ dev\wplugins\waze\gerementions\Main.class
 dev\wplugins\waze\gerementions\util\Webhook$EmbedObject$Image.class
 dev\wplugins\waze\gerementions\Reports\ReportsUtil.class
 dev\wplugins\waze\gerementions\commands\cmd\BanCommand$1.class
+dev\wplugins\waze\gerementions\commands\cmd\ResetPunishes.class
