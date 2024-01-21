@@ -59,8 +59,8 @@ public class PunishDao {
     }
 
 
-    public Punish createPunish(String targetName, String stafferName, Reason reason, String proof, String type, int idreal) {
-        Punish punish = Punish.builder().id(UUID.randomUUID().toString().substring(0, 6)).playerName(targetName).stafferName(stafferName).reason(reason).type(type).proof(proof).date(new Date().getTime()).expire((reason.getTime() != 0 ? (System.currentTimeMillis() + reason.getTime()) : 0)).idpenis(punishService.getPunishes().size()).build();
+    public Punish createPunish(String targetName, String stafferName, Reason reason, String proof, String type, int idreal, String ip) {
+        Punish punish = Punish.builder().id(UUID.randomUUID().toString().substring(0, 6)).playerName(targetName).stafferName(stafferName).reason(reason).type(type).proof(proof).date(new Date().getTime()).expire((reason.getTime() != 0 ? (System.currentTimeMillis() + reason.getTime()) : 0)).idpenis(punishService.getPunishes().size()).ip(ip).build();
         CompletableFuture.runAsync(() -> {
 
             while (getPunishService().getPunishes().stream().anyMatch(p -> p.getId().equals(punish.getId()))) {
@@ -71,7 +71,7 @@ public class PunishDao {
 
             punishService.getPunishes().add(punish);
             lastHourPunishes.add(punish);
-            Database.getInstance().execute("INSERT INTO `wPunish` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", punish.getId(), punish.getPlayerName(), punish.getStafferName(), punish.getReason().name(), punish.getType(), punish.getProof(), punish.getDate(), punish.getExpire(), punish.getIdpenis());
+            Database.getInstance().execute("INSERT INTO `wPunish` VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", punish.getId(), punish.getPlayerName(), punish.getStafferName(), punish.getReason().name(), punish.getType(), punish.getProof(), punish.getDate(), punish.getExpire(), punish.getIdpenis(), punish.getIp());
             Main.getInstance().getLogger().info("Nova punição salva " + stafferName + " puniu " + targetName);
             Main.getInstance().getLogger().info("Tipo " + type);
             Main.getInstance().getLogger().info("Motivo " + reason);
@@ -135,8 +135,8 @@ public class PunishDao {
             ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish2");
             if (MySQLDatabase.instancia == PluginInstance.BUNGEECORD) {
                 if (resultSet.next()) {
-                    punishService.getPunishes().add(Punish.builder().id(resultSet.getString("id")).playerName(resultSet.getString("playerName")).stafferName(resultSet.getString("stafferName")).reason(Reason.valueOf(resultSet.getString("reason"))).proof(resultSet.getString("proof")).date(resultSet.getLong("date")).expire(resultSet.getLong("expires")).idpenis(resultSet.getInt("idreal")).build());
-                    punishService.create(Punish.builder().id(resultSet.getString("id")).playerName(resultSet.getString("playerName")).stafferName(resultSet.getString("stafferName")).reason(Reason.valueOf(resultSet.getString("reason"))).proof(resultSet.getString("proof")).date(resultSet.getLong("date")).expire(resultSet.getLong("expires")).idpenis(resultSet.getInt("idreal")).build());
+                    punishService.getPunishes().add(Punish.builder().id(resultSet.getString("id")).playerName(resultSet.getString("playerName")).stafferName(resultSet.getString("stafferName")).reason(Reason.valueOf(resultSet.getString("reason"))).proof(resultSet.getString("proof")).date(resultSet.getLong("date")).expire(resultSet.getLong("expires")).idpenis(resultSet.getInt("idreal")).ip(resultSet.getString("ip")).build());
+                    punishService.create(Punish.builder().id(resultSet.getString("id")).playerName(resultSet.getString("playerName")).stafferName(resultSet.getString("stafferName")).reason(Reason.valueOf(resultSet.getString("reason"))).proof(resultSet.getString("proof")).date(resultSet.getLong("date")).expire(resultSet.getLong("expires")).idpenis(resultSet.getInt("idreal")).ip(resultSet.getString("ip")).build());
                 }
             }
             if (resultSet2.next()) {

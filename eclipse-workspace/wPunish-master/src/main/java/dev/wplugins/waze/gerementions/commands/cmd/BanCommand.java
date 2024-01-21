@@ -3,6 +3,7 @@ package dev.wplugins.waze.gerementions.commands.cmd;
 
 import dev.wplugins.waze.gerementions.Main;
 import dev.wplugins.waze.gerementions.commands.Commands;
+import dev.wplugins.waze.gerementions.database.MySQLDatabase;
 import dev.wplugins.waze.gerementions.enums.punish.PunishType;
 import dev.wplugins.waze.gerementions.enums.reason.Reason;
 import dev.wplugins.waze.gerementions.punish.Punish;
@@ -19,6 +20,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.awt.*;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.stream.Stream;
 
@@ -60,24 +64,34 @@ public class BanCommand extends Commands {
                     "\n§c- Duração: Permanente\n"));
         });
         PunishDao punish = new PunishDao();
-        apply(punish.createPunish(target, sender.getName(), Reason.VIOLACAO_DAS_DIRETRIZES, null, PunishType.BAN.name(), sequence++), ProxyServer.getInstance().getPlayer(target), sender.getName());
-        Webhook webhook = new Webhook(webhookURL);
-        webhook.addEmbed(
-                new Webhook.EmbedObject()
-                        .setDescription("Um usuário foi punido do servidor.")
-                        .setThumbnail("https://mc-heads.net/avatar/" + target + "/500")
-                        .setColor(Color.decode("#00A8FF"))
-                        .addField("Usuário:", target, true)
-                        .addField("Motivo:", args[1], true)
-                        .addField("Duração:", "Eterna", false)
-                        .addField("Tipo:", "Banimento", true)
-                        .addField("Expira em:", "Nunca", true)
-                        .addField("Provas:", "Nenhuma", true)
-        );
+
+        Statement statement3 = null;
         try {
-            webhook.execute();
-        } catch (IOException e) {
-            Main.getInstance().getLogger().severe(e.getStackTrace().toString());
+            statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
+
+            ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "'");
+            apply(punish.createPunish(target, sender.getName(), Reason.VIOLACAO_DAS_DIRETRIZES, null, PunishType.BAN.name(), sequence++, ProxyServer.getInstance().getPlayer(target).getAddress().getHostName() != null ? ProxyServer.getInstance().getPlayer(target).getAddress().getHostName() : "NULO"), ProxyServer.getInstance().getPlayer(target), sender.getName());
+            Webhook webhook = new Webhook(webhookURL);
+            webhook.addEmbed(
+                    new Webhook.EmbedObject()
+                            .setDescription("Um usuário foi punido do servidor.")
+                            .setThumbnail("https://mc-heads.net/avatar/" + target + "/500")
+                            .setColor(Color.decode("#00A8FF"))
+                            .addField("Usuário:", target, true)
+                            .addField("Motivo:", args[1], true)
+                            .addField("Duração:", "Eterna", false)
+                            .addField("Tipo:", "Banimento", true)
+                            .addField("Expira em:", "Nunca", true)
+                            .addField("Provas:", "Nenhuma", true)
+            );
+            try {
+                webhook.execute();
+            } catch (IOException e) {
+                BungeeCord.getInstance().getConsole().sendMessage(e.getLocalizedMessage());
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
     private static void apply(Punish punish, ProxiedPlayer target, String staffer) {

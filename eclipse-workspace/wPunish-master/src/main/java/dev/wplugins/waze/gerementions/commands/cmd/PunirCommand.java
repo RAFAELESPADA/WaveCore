@@ -147,8 +147,14 @@ public class PunirCommand extends Commands {
                         sender.sendMessage("§cEsse jogador já está banido permanentemente!");
                         return;
                 } else {
-                        apply(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name(), sequence++), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                        Statement statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
+
+                        ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "'");
+
+                        applyp(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name(), sequence++, ProxyServer.getInstance().getPlayer(targetName) == null ? "NULO" : ProxyServer.getInstance().getPlayer(targetName).getAddress().getHostName()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+
                         if (reason.getPunishType() == PunishType.MUTE) {
+
                             punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
                         } else if (reason.getPunishType() == PunishType.BAN) {
                             punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.BAN.name());
@@ -233,7 +239,11 @@ public class PunirCommand extends Commands {
                         sender.sendMessage("§cEsse jogador já está banido permanentemente! Despuna para punir por outro motivo.");
                         return;
                     } else {
-                        apply(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().name(), sequence++), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                        Statement statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
+
+                        ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "'");
+
+                        applyp(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().name(), sequence++, ProxyServer.getInstance().getPlayer(targetName) == null ? "NULO" : ProxyServer.getInstance().getPlayer(targetName).getAddress().getHostName()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
                         if (reason.getPunishType() == PunishType.MUTE) {
                             punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
                         } else if (reason.getPunishType() == PunishType.BAN) {
@@ -276,7 +286,7 @@ public class PunirCommand extends Commands {
 
 
 
-    private static void apply(Punish punish, ProxiedPlayer target, String staffer) {
+    private static void applyp(Punish punish, ProxiedPlayer target, String staffer) {
         final String textString;
         final Reason reason = punish.getReason();
         final String proof = (punish.getProof() == null ? "Nenhuma" : punish.getProof());

@@ -13,6 +13,7 @@ public class Punish {
     @Setter
     private String id;
     private Integer idpenis;
+    private String ip;
     private final String playerName, stafferName, proof, type;
     private final long date, expire;
     private final Reason reason;

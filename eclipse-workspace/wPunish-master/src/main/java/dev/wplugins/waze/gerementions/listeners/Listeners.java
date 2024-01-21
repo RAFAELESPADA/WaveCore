@@ -16,6 +16,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.event.EventHandler;
 
+import java.net.InetSocketAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -39,6 +40,8 @@ public class Listeners implements Listener {
     @EventHandler
     public void login(PreLoginEvent event) {
         String name = event.getConnection().getName();
+
+        InetSocketAddress ip = event.getConnection().getAddress();
         BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " está entrando (PRELOGIN)...");
 
 
@@ -50,18 +53,21 @@ public class Listeners implements Listener {
                 {
                     try {
 
-
                         Statement statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
                         ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + name + "'");
 
-                        Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
 
+
+
+                    Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
                         ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + name + "' AND (type='BAN' OR type='TEMPBAN' OR type='Banimento temporário')");
-                        if (resultSet2.next() && resultSet3.next()) {
+                        ResultSet resultSetIP = statement3.executeQuery("SELECT * FROM wPunish WHERE ip='" + ip.getHostName() + "'");
+
+                        if ((resultSet2.next() && resultSet3.next())) {
                             Reason r = Reason.valueOf(resultSet3.getString("reason"));
                             event.setCancelled(true);
-                            Main.getInstance().getLogger().log(Level.FINE
-                                    , "Jogador " + name + " tentou entrar mas está banido");
+                            BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " (" + BungeeCord.getInstance().getPlayer(name).getAddress().getHostName() + ") tentou entrar mas está banido");
+
                             String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
                             event.setCancelReason(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê está banido do servidor.\n" +
                                     "\n§cMotivo: " + r.getText() + " - " + proof +
@@ -74,7 +80,24 @@ public class Listeners implements Listener {
                                     "\n§cID da punição: §e#" + resultSet2.getString("id") +
                                     "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
                             return;
-                        } else {
+                        } else if (resultSetIP.next()) {
+
+                                Reason r = Reason.valueOf(resultSet3.getString("reason"));
+                                event.setCancelled(true);
+                                BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " (" + BungeeCord.getInstance().getPlayer(name).getAddress().getHostName() + ") tentou entrar mas está banido");
+                                String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
+                                event.setCancelReason(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§eSeu IP está banido do servidor.\n" +
+                                        "\n§cMotivo: " + r.getText() + " - " + proof +
+                                        "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires")) +
+                                        "\n§cID da punição: §e#" + resultSet2.getString("id") +
+                                        "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
+                                event.getConnection().disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§eSeu IP banido do servidor.\n" +
+                                        "\n§cMotivo: " + r.getText() + " - " + proof +
+                                        "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires")) +
+                                        "\n§cID da punição: §e#" + resultSet2.getString("id") +
+                                        "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
+
+                            } else {
                             Main.getInstance().getLogger().log(Level.FINE
                                     , "Jogador " + name + " não está banido");
                             BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " não está banido...");
@@ -97,9 +120,11 @@ public class Listeners implements Listener {
     @EventHandler
     public void login(LoginEvent event) {
         String name = event.getConnection().getName();
+
         BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " está entrando (LOGIN)...");
 
 
+        InetSocketAddress ip = event.getConnection().getAddress();
         Main.getInstance().getLogger().log(Level.FINE
                 , "Jogador " + name + " está entrando...");
         BungeeCord.getInstance().getScheduler().schedule(Main.getInstance(), new Runnable() {
@@ -114,12 +139,14 @@ public class Listeners implements Listener {
                         Statement statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
                         ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + name + "'");
 
+                        ResultSet resultSetIP = statement3.executeQuery("SELECT * FROM wPunish WHERE ip='" + ip.getHostName() + "'");
                         ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + name + "' AND (type='BAN' OR type='TEMPBAN' OR type='Banimento temporário')");
-                        if (resultSet2.next()  && resultSet3.next()) {
+
+                        if ((resultSet2.next() && resultSet3.next())) {
+
                             Reason r = Reason.valueOf(resultSet3.getString("reason"));
                             event.setCancelled(true);
-                            Main.getInstance().getLogger().log(Level.FINE
-                                    , "Jogador " + name + " tentou entrar mas está banido");
+                            BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " (" + BungeeCord.getInstance().getPlayer(name).getAddress().getHostName() + ") tentou entrar mas está banido");
                             String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
                             event.setCancelReason(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§cVocê está banido do servidor.\n" +
                                     "\n§cMotivo: " + r.getText() + " - " + proof +
@@ -132,7 +159,24 @@ public class Listeners implements Listener {
                                     "\n§cID da punição: §e#" + resultSet2.getString("id") +
                                     "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
                             return;
-                        } else {
+                        }  else if (resultSetIP.next()) {
+
+                            Reason r = Reason.valueOf(resultSet3.getString("reason"));
+                            event.setCancelled(true);
+                            BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " (" + BungeeCord.getInstance().getPlayer(name).getAddress().getHostName() + ") tentou entrar mas está banido");
+                            String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
+                            event.setCancelReason(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§eSeu IP está banido do servidor.\n" +
+                                    "\n§cMotivo: " + r.getText() + " - " + proof +
+                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires")) +
+                                    "\n§cID da punição: §e#" + resultSet2.getString("id") +
+                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
+                            event.getConnection().disconnect(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§eSeu IP banido do servidor.\n" +
+                                    "\n§cMotivo: " + r.getText() + " - " + proof +
+                                    "\n§cAutor da punição: §7" + resultSet2.getString("stafferName") + "\n§cExpira em: §7" + (resultSet2.getLong("expires") == 0 ? "Nunca" : SDF2.format(resultSet2.getLong("expires")) +
+                                    "\n§cID da punição: §e#" + resultSet2.getString("id") +
+                                    "\n\n§cUse o ID §e#" + resultSet2.getString("id") + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§"))));
+
+                            } else {
                             Main.getInstance().getLogger().log(Level.FINE
                                     , "Jogador " + name + " não está banido");
                             BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " não está banido...");
@@ -157,6 +201,7 @@ public class Listeners implements Listener {
     public void chat(ChatEvent event) {
         String evmessage = event.getMessage();
 
+        InetSocketAddress ip = event.getSender().getAddress();
         if (evmessage.contains("/report") || evmessage.startsWith("/report") && event.isCommand()) {
             return;
         }
@@ -180,8 +225,12 @@ public class Listeners implements Listener {
 
             Statement statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
             ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player.getName() + "'");
+            ResultSet resultSetip = statement3.executeQuery("SELECT * FROM wPunish WHERE ip='" + BungeeCord.getInstance().getPlayer(player.getName()).getAddress().getHostName() + "'");
+            boolean ipbanido = statement3.executeQuery("SELECT * FROM wPunish WHERE ip='" + ip.getHostName() + "'").next();
+
             List<String> commands = Arrays.asList("/tell", "/g", "/r");
-            if (!resultSet2.next() || !resultSet3.next()) {
+
+            if (!((resultSet2.next() && resultSet3.next()))) {
                 return;
             }
             if (event.isCommand()) {
@@ -212,9 +261,21 @@ public class Listeners implements Listener {
 
             event.setCancelled(true);
             BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because is muted.");
+            if (resultSetip.next()) {
+
+
+                BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is IP muted");
+                player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
+                        "\n\n§c* Motivo: " + r.getText() + " - " + proof +
+                        "\n§c* Autor: " + resultSet2.getString("stafferName") +
+                        "\n§c* Use o ID §e#" + String.valueOf(resultSet2.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
+                        "\n"));
+
+
+                event.setCancelled(true);
+                BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because is muted.");
+            }
             if (!event.isCommand()) {
-
-
 
 
                 BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
