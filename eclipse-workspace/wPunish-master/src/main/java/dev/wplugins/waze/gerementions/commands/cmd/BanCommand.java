@@ -70,7 +70,7 @@ public class BanCommand extends Commands {
             statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
 
             ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "'");
-            apply(punish.createPunish(target, sender.getName(), Reason.VIOLACAO_DAS_DIRETRIZES, null, PunishType.BAN.name(), sequence++, ProxyServer.getInstance().getPlayer(target) != null ? ProxyServer.getInstance().getPlayer(target).getAddress().getHostName() : "NULO"), ProxyServer.getInstance().getPlayer(target), sender.getName());
+            apply(punish.createPunish(target, sender.getName(), Reason.VIOLACAO_DAS_DIRETRIZES, null, PunishType.BAN.name(), sequence++, ProxyServer.getInstance().getPlayer(target) != null ? ProxyServer.getInstance().getPlayer(target).getAddress().getAddress().toString() : "NULO"), ProxyServer.getInstance().getPlayer(target), sender.getName());
             Webhook webhook = new Webhook(webhookURL);
             webhook.addEmbed(
                     new Webhook.EmbedObject()

@@ -151,7 +151,7 @@ public class PunirCommand extends Commands {
 
                         ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "'");
 
-                        applyp(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name(), sequence++, ProxyServer.getInstance().getPlayer(targetName) == null ? "NULO" : ProxyServer.getInstance().getPlayer(targetName).getAddress().getHostName()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                        applyp(punishDao.createPunish(targetName, sender.getName(), reason, null, reason.getPunishType().name(), sequence++, ProxyServer.getInstance().getPlayer(targetName) == null ? "NULO" : ProxyServer.getInstance().getPlayer(targetName).getAddress().getAddress().toString()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
 
                         if (reason.getPunishType() == PunishType.MUTE) {
 
@@ -243,7 +243,7 @@ public class PunirCommand extends Commands {
 
                         ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + args[0] + "'");
 
-                        applyp(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().name(), sequence++, ProxyServer.getInstance().getPlayer(targetName) == null ? "NULO" : ProxyServer.getInstance().getPlayer(targetName).getAddress().getHostName()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
+                        applyp(punishDao.createPunish(targetName, sender.getName(), reason, proof, reason.getPunishType().name(), sequence++, ProxyServer.getInstance().getPlayer(targetName) == null ? "NULO" : ProxyServer.getInstance().getPlayer(targetName).getAddress().getAddress().toString()), ProxyServer.getInstance().getPlayer(targetName), sender.getName());
                         if (reason.getPunishType() == PunishType.MUTE) {
                             punishDao.createPunish2(targetName, sender.getName(), ReasonSpigot.AMEACA, null, PunishType.MUTE.name());
                         } else if (reason.getPunishType() == PunishType.BAN) {
