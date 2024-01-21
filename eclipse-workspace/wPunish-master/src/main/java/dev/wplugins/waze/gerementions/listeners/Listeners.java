@@ -62,7 +62,7 @@ public class Listeners implements Listener {
 
                         Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
                         ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + name + "' AND (type='BAN' OR type='TEMPBAN' OR type='Banimento temporário')");
-                        ResultSet resultSetIP = statement4.executeQuery("SELECT * FROM wPunish WHERE ip='" + ip.getHostName() + "'");
+                        ResultSet resultSetIP = statement4.executeQuery("SELECT * FROM wPunish WHERE ip='" + ip.getAddress() + "'");
 
                         if ((resultSet2.next() && resultSet3.next())) {
                             Reason r = Reason.valueOf(resultSet3.getString("reason"));
@@ -166,7 +166,7 @@ public class Listeners implements Listener {
 
                             Reason r = Reason.valueOf(resultSetIP.getString("reason"));
                             event.setCancelled(true);
-                            BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " (" + BungeeCord.getInstance().getPlayer(name).getAddress().getAddress() + ") tentou entrar mas está banido");
+                            BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " (" + ip.getAddress() + ") tentou entrar mas está banido");
                             String proof = (resultSetIP.getString("proof") == null ? "Indisponível" : resultSetIP.getString("proof"));
                             event.setCancelReason(TextComponent.fromLegacyText(Main.getInstance().getConfig().getString("Prefix").replace("&", "§") + "\n\n§eSeu IP está banido do servidor.\n" +
                                     "\n§cMotivo: " + r.getText() + " - " + proof +

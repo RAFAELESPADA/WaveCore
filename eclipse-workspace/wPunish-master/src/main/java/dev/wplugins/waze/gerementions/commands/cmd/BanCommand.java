@@ -33,6 +33,8 @@ public class BanCommand extends Commands {
     }
 
     public static Punish punish;
+
+    //private String webhookURL = "https://discord.com/api/webhooks/1181247723660394546/jif9m6zF5-Gylit7op4vZGX2CyEP0JiBkCKxwOOVjrvv4_JtRZsjPXUjzly6Ffi94KDg";
     private String webhookURL = Main.getInstance().getConfig().getString("WebHookURL");
     @Override
     public void perform(CommandSender sender, String[] args) {
