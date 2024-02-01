@@ -261,13 +261,13 @@ public class Listeners implements Listener {
 
 
                         BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
-
-                        Reason r = Reason.valueOf(resultSet3.getString("reason"));
-                        player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
-                                "\n\n§c* Motivo: " + r.getText() + " - " + proof +
-                                "\n§c* Autor: " + resultSet2.getString("stafferName") +
-                                "\n§c* Use o ID §e#" + String.valueOf(resultSet2.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
-                                "\n"));
+if (resultSet3.next()) {
+    Reason r = Reason.valueOf(resultSet3.getString("reason"));
+    player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
+            "\n\n§c* Motivo: " + r.getText() + " - " + proof +
+            "\n§c* Autor: " + resultSet2.getString("stafferName") +
+            "\n§c* Use o ID §e#" + String.valueOf(resultSet2.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
+            "\n"));
 
 
                         event.setCancelled(true);
@@ -300,7 +300,7 @@ public class Listeners implements Listener {
 
                             event.setCancelled(true);
                             BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because is muted.");
-
+                        }
                         } else {
                             Main.getInstance().getLogger().log(Level.FINE
                                     , "Jogador " + player.getName() + " não está MUTADO");
