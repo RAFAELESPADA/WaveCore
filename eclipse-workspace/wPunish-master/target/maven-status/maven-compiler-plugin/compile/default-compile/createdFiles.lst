@@ -5,7 +5,6 @@ dev\wplugins\waze\gerementions\commands\cmd\BanCommand.class
 dev\wplugins\waze\gerementions\punish\service\PunishServiceSpigot.class
 dev\wplugins\waze\gerementions\enums\punish\RevogarType.class
 dev\wplugins\waze\gerementions\punish\service\impl\PunishServiceImpl.class
-dev\wplugins\waze\gerementions\listeners\Listeners$3.class
 dev\wplugins\waze\gerementions\database\MySQLDatabase.class
 dev\wplugins\waze\gerementions\BukkitMain.class
 dev\wplugins\waze\gerementions\listeners\BukkitListener.class

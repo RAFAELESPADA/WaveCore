@@ -199,10 +199,17 @@ public class Listeners implements Listener {
     }
 
 
+    @SneakyThrows
     @EventHandler
     public void chat(ChatEvent event) {
         String evmessage = event.getMessage();
 
+        Statement statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
+
+        ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + event.getSender() + "'");
+        if (!resultSet3.next()) {
+            return;
+        }
         InetSocketAddress ip = event.getSender().getAddress();
         if (evmessage.contains("/report") || evmessage.startsWith("/report") && event.isCommand()) {
             return;
@@ -218,102 +225,95 @@ public class Listeners implements Listener {
             return;
         }
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        BungeeCord.getInstance().getScheduler().schedule(Main.getInstance(), new Runnable() {
 
-            @SneakyThrows
-            public void run() {
 
-                {
-                    BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " -> " + event.getMessage());
-                    Main.getInstance().getLogger().log(Level.FINE, "[SERVER CHAT] " + player.getName() + " -> " + event.getMessage());
-                    Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
-                    ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player.getName() + "' AND (type='MUTE' OR type='Mute temporário' OR type='TEMPMUTE')");
-                    String message = event.getMessage();
+                BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " -> " + event.getMessage());
+                Main.getInstance().getLogger().log(Level.FINE, "[SERVER CHAT] " + player.getName() + " -> " + event.getMessage());
+                Statement statement2 = MySQLDatabase.getInstance().getConnection().createStatement();
+                ResultSet resultSet2 = statement2.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player.getName() + "' AND (type='MUTE' OR type='Mute temporário' OR type='TEMPMUTE')");
+                String message = event.getMessage();
 
-                    Statement statement3 = MySQLDatabase.getInstance().getConnection().createStatement();
-                    Statement statement4 = MySQLDatabase.getInstance().getConnection().createStatement();
+                Statement statement4 = MySQLDatabase.getInstance().getConnection().createStatement();
 
-                    ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player.getName() + "'");
-                    ResultSet resultSetip = statement4.executeQuery("SELECT * FROM wPunish WHERE ip='" + BungeeCord.getInstance().getPlayer(player.getName()).getAddress().getAddress() + "'");
+                ResultSet resultSetip = statement4.executeQuery("SELECT * FROM wPunish WHERE ip='" + BungeeCord.getInstance().getPlayer(player.getName()).getAddress().getAddress() + "'");
 
-                    if (!resultSet2.next() && !resultSetip.next() && !resultSet3.next()) {
+                if (!resultSet2.next() && !resultSetip.next()) {
+                    return;
+                }
+                List<String> commands = Arrays.asList("/tell", "/g", "/r");
+
+
+                if (event.isCommand()) {
+
+                    if (commands.stream().noneMatch(s -> message.startsWith(s) || message.startsWith(s.toUpperCase()) || message.equalsIgnoreCase(s))) {
+                        event.setCancelled(false);
                         return;
                     }
-                    List<String> commands = Arrays.asList("/tell", "/g", "/r");
+                } else if (message.startsWith("/report") || message.startsWith("/s") || message.startsWith("/c") || message.startsWith("/reportar") ||
+                        message.equalsIgnoreCase("/lobby") ||
+                        message.startsWith("/logar") || message.startsWith("/login") || message.equalsIgnoreCase("/rejoin") ||
+                        message.equalsIgnoreCase("/reentrar") || message.equalsIgnoreCase("/leave") || message.equalsIgnoreCase("/loja") || message.equalsIgnoreCase("/party aceitar")) {
+                    event.setCancelled(false);
+                    return;
+
+                }
+                String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
 
 
+                BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
+                if (resultSet3.next()) {
+                    Reason r = Reason.valueOf(resultSet3.getString("reason"));
+                    player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
+                            "\n\n§c* Motivo: " + r.getText() + " - " + proof +
+                            "\n§c* Autor: " + resultSet2.getString("stafferName") +
+                            "\n§c* Use o ID §e#" + String.valueOf(resultSet2.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
+                            "\n"));
+                    event.setCancelled(true);
 
-                        if (event.isCommand()) {
-
-                            if (commands.stream().noneMatch(s -> message.startsWith(s) || message.startsWith(s.toUpperCase()) || message.equalsIgnoreCase(s))) {
-                                event.setCancelled(false);
-                                return;
-                            }
-                        } else if (message.startsWith("/report") || message.startsWith("/s") || message.startsWith("/c") || message.startsWith("/reportar") ||
-                                message.equalsIgnoreCase("/lobby") ||
-                                message.startsWith("/logar") || message.startsWith("/login") || message.equalsIgnoreCase("/rejoin") ||
-                                message.equalsIgnoreCase("/reentrar") || message.equalsIgnoreCase("/leave") || message.equalsIgnoreCase("/loja") || message.equalsIgnoreCase("/party aceitar")) {
-                            event.setCancelled(false);
-                            return;
-
-                        }
-                        String proof = (resultSet2.getString("proof") == null ? "Indisponível" : resultSet2.getString("proof"));
+                    BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because he is muted.");
+                    if (resultSetip.next()) {
+                        String pf2 = (resultSetip.getString("proof") == null ? "Indisponível" : resultSetip.getString("proof"));
 
 
-                        BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
-if (resultSet3.next()) {
-    Reason r = Reason.valueOf(resultSet3.getString("reason"));
-    player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
-            "\n\n§c* Motivo: " + r.getText() + " - " + proof +
-            "\n§c* Autor: " + resultSet2.getString("stafferName") +
-            "\n§c* Use o ID §e#" + String.valueOf(resultSet2.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
-            "\n"));
+                        BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is IP muted");
+                        player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSetip.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSetip.getLong("expires")) : "permanentemente") +
+                                "\n\n§c* Motivo: " + resultSetip.getString("reason") + " - " + pf2 +
+                                "\n§c* Autor: " + resultSetip.getString("stafferName") +
+                                "\n§c* Use o ID §e#" + String.valueOf(resultSetip.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
+                                "\n"));
+
 
 
                         event.setCancelled(true);
                         BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because is muted.");
-                        if (resultSetip.next()) {
-                            String pf2 = (resultSetip.getString("proof") == null ? "Indisponível" : resultSetip.getString("proof"));
-
-
-                            BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is IP muted");
-                            player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSetip.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSetip.getLong("expires")) : "permanentemente") +
-                                    "\n\n§c* Motivo: " + resultSetip.getString("reason") + " - " + pf2 +
-                                    "\n§c* Autor: " + resultSetip.getString("stafferName") +
-                                    "\n§c* Use o ID §e#" + String.valueOf(resultSetip.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
-                                    "\n"));
-
-
-                            event.setCancelled(true);
-                            BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because is muted.");
-                        }
-                        if (!event.isCommand()) {
-
-
-                            BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
-                            player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
-                                    "\n\n§c* Motivo: " + r.getText() + " - " + proof +
-                                    "\n§c* Autor: " + resultSet2.getString("stafferName") +
-                                    "\n§c* Use o ID §e#" + String.valueOf(resultSet2.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
-                                    "\n"));
-
-
-                            event.setCancelled(true);
-                            BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because is muted.");
-                        }
-                        } else {
-                            Main.getInstance().getLogger().log(Level.FINE
-                                    , "Jogador " + player.getName() + " não está MUTADO");
-                            BungeeCord.getInstance().getConsole().sendMessage("Jogador " + player.getName() + " não está MUTADO");
-                        }
-
                     }
+                    if (!event.isCommand()) {
 
+
+                        BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
+                        player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
+                                "\n\n§c* Motivo: " + r.getText() + " - " + proof +
+                                "\n§c* Autor: " + resultSet2.getString("stafferName") +
+                                "\n§c* Use o ID §e#" + String.valueOf(resultSet2.getString("id")) + " §cpara criar uma revisão em " + Main.getInstance().getConfig().getString("AppealSite").replace("&", "§") +
+                                "\n"));
+
+
+                        event.setCancelled(true);
+                        BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " gets message canceled because is muted.");
+                    }
+                } else {
+                    Main.getInstance().getLogger().log(Level.FINE
+                            , "Jogador " + player.getName() + " não está MUTADO");
+                    BungeeCord.getInstance().getConsole().sendMessage("Jogador " + player.getName() + " não está MUTADO");
                 }
 
-        },1, TimeUnit.MILLISECONDS);
-    }
-}
+            }
+
+        }
+
+
+
+
 
 
 
