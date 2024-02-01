@@ -236,7 +236,7 @@ public class Listeners implements Listener {
                     ResultSet resultSet3 = statement3.executeQuery("SELECT * FROM wPunish WHERE playerName='" + player.getName() + "'");
                     ResultSet resultSetip = statement4.executeQuery("SELECT * FROM wPunish WHERE ip='" + BungeeCord.getInstance().getPlayer(player.getName()).getAddress().getAddress() + "'");
 
-                    if (!resultSet2.next() && !resultSetip.next()) {
+                    if (!resultSet2.next() && !resultSetip.next() && !resultSet3.next()) {
                         return;
                     }
                     List<String> commands = Arrays.asList("/tell", "/g", "/r");
@@ -261,6 +261,7 @@ public class Listeners implements Listener {
 
 
                         BungeeCord.getInstance().getConsole().sendMessage("[SERVER CHAT] " + player.getName() + " is muted");
+
                         Reason r = Reason.valueOf(resultSet3.getString("reason"));
                         player.sendMessage(TextComponent.fromLegacyText("\n§c* Você está silenciado " + (resultSet2.getLong("expires") > 0 ? "até o dia " + SDF.format(resultSet2.getLong("expires")) : "permanentemente") +
                                 "\n\n§c* Motivo: " + r.getText() + " - " + proof +
