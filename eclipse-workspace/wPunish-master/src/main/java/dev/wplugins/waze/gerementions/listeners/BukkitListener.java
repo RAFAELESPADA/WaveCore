@@ -63,7 +63,8 @@ public class BukkitListener implements Listener {
                         event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
                         event.getPlayer().kickPlayer(message);
                     }
-
+resultSet3.close();
+                    resultSet2.close();
                 } catch (Exception exception) {
 
                     BukkitMain.getPlugin().getLogger().log(Level.SEVERE, "UM ERRO OCCOREU");

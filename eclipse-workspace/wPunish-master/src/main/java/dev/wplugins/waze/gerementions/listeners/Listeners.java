@@ -104,6 +104,10 @@ public class Listeners implements Listener {
                                     , "Jogador " + name + " não está banido");
                             BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " não está banido...");
                         }
+
+                        resultSet3.close();
+                        resultSetIP.close();
+                        resultSet2.close();
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
@@ -185,6 +189,10 @@ public class Listeners implements Listener {
                                     , "Jogador " + name + " não está banido");
                             BungeeCord.getInstance().getConsole().sendMessage("Jogador " + name + " não está banido...");
                         }
+
+                        resultSet3.close();
+                        resultSetIP.close();
+                        resultSet2.close();
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
@@ -306,7 +314,9 @@ public class Listeners implements Listener {
                             , "Jogador " + player.getName() + " não está MUTADO");
                     BungeeCord.getInstance().getConsole().sendMessage("Jogador " + player.getName() + " não está MUTADO");
                 }
-
+resultSet3.close();
+                resultSetip.close();
+                resultSet2.close();
             }
 
         }
