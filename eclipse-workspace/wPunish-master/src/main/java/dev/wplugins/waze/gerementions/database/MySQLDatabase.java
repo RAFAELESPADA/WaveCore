@@ -61,7 +61,6 @@ public class MySQLDatabase extends Database {
                     Properties props = new Properties();
                     props.put("autoReconnect", "true");
                     props.put("failOverReadOnly" , "false");
-                    props.put("maxReconnects" , "12");
                     props.put("user", Main.getInstance().getConfig().getString("database.user"));
                     props.put("password", Main.getInstance().getConfig().getString("database.senha"));
                     connection2 =  DriverManager.getConnection("jdbc:mysql://" + Main.getInstance().getConfig().getString("database.host") + "/" + Main.getInstance().getConfig().getString("database.nome"), props);
@@ -69,7 +68,6 @@ public class MySQLDatabase extends Database {
                     Properties props = new Properties();
                     props.put("autoReconnect", "true");
                     props.put("failOverReadOnly" , "false");
-                    props.put("maxReconnects" , "10");
                     props.put("user", BukkitMain.getPlugin().getConfig().getString("database.user"));
                     props.put("password", BukkitMain.getPlugin().getConfig().getString("database.senha"));
                     connection2 =  DriverManager.getConnection("jdbc:mysql://" + BukkitMain.getPlugin().getConfig().getString("database.host") + "/" + BukkitMain.getPlugin().getConfig().getString("database.nome"), props);
