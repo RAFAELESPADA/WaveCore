@@ -1,0 +1,6 @@
+name: Server-Manager
+main: me.rafaelauler.ss.Main
+version: 1.0.0
+author: Rafael Auler
+description: kombopvp.com
+softDepends: [LuckPerms]

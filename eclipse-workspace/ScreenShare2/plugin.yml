@@ -1,0 +1,10 @@
+name: FaintLPUtils
+author: zEnderX5_ , Rafael Auler
+main: me.rafaelauler.ss.BukkitMain
+version: 1.0
+loadbefore: [KPCore]
+commands:
+  membro:
+  set-prefix:
+
+  
