@@ -33,6 +33,12 @@ public void execute(CommandSender sender, String[] args) {
     String targetPlayerName = args[0];
     ProxiedPlayer from = (ProxiedPlayer)sender;
     ProxiedPlayer to = ProxyServer.getInstance().getPlayer(args[0]);
+    if (from.getServer() == to.getServer()) {
+    	 sender.sendMessage("§cVocê já está no servidor desse jogador.");
+    	 sender.sendMessage("§cUtilize /tp para ir para ele.");
+         return;
+       	
+    }
     String command = String.join(" ", Arrays.<CharSequence>copyOfRange((CharSequence[])args, 1, args.length));
     ProxiedPlayer targetPlayer = ProxyServer.getInstance().getPlayer(targetPlayerName);
     if (targetPlayer == null) {

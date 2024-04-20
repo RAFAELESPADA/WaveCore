@@ -13,8 +13,6 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import com.google.common.io.ByteStreams;
-import com.jakub.premium.api.App;
-import com.jakub.premium.api.User;
 
 import lombok.SneakyThrows;
 import net.luckperms.api.LuckPermsProvider;
@@ -93,19 +91,7 @@ instance = this;
 		      e.setCancelled(true);
 		    } 
 		  }
-		  @EventHandler
-		  public void onCh(ChatEvent e) {
-			  ProxiedPlayer p = (ProxiedPlayer)e.getSender();
 
-			  App a = com.jakub.premium.JPremium.getApplication();
-			  User u = a.getUserProfileByNickname(p.getName()).get();
-			  if (u.isPremium()) {
-				  return;
-			  }
-			  else if (!u.hasSession() && (!(e.getMessage().startsWith("/register") && (e.getMessage().startsWith("/login"))))) {
-				 p.sendMessage("§6Você não está logado! Para concluir logue-se ou registre-se com /login ou /register");
-			  }
-		  }
 		  public File loadResource(String resource) {
 		    File folder = getDataFolder();
 		    if (!folder.exists())
@@ -155,10 +141,10 @@ instance = this;
 	    	    getProxy().getPluginManager().registerCommand(this, new ReloadCommand(this));
 	    	    getProxy().getPluginManager().registerCommand(this, new TempoGrupo());
 
-		    	 pluginManager.registerCommand(this, new LobbyClass());
 		    	 pluginManager.registerCommand(this, new StaffChat(this));
 	    	 pluginManager.registerCommand(this, new BSudo());
-
+	    	 pluginManager.registerCommand(this, new BTP());
+	    	 pluginManager.registerCommand(this, new PingCommand());
 	    	 pluginManager.registerCommand(this, new ListarUsuarios());
 	    	 pluginManager.registerCommand(this, new Report());
 	    	 pluginManager.registerCommand(this, new Grupo());

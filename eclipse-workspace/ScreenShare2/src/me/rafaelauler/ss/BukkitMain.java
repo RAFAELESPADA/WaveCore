@@ -11,6 +11,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
@@ -36,6 +38,20 @@ registerEvents();
 if (MCVersion.get().isInferior(MCVersion.v1_13)) {
     channel2 = "bungee:teleport"; 
 }
+new org.bukkit.scheduler.BukkitRunnable() {
+	
+	@Override
+	public void run() {
+		for (Player cao : Bukkit.getOnlinePlayers()) {
+			if (cao.getWorld().getName().equals("Eventos")) {
+				darEfeito(cao, PotionEffectType.NIGHT_VISION, 5, 1);
+			}
+		}
+		
+	}
+}.runTaskTimer(this, 0, 1 * 1L);
+    
+
 this.luckPerms = getServer().getServicesManager().load(LuckPerms.class);
   Bukkit.getMessenger().registerOutgoingPluginChannel(this, channel2);
   Bukkit.getMessenger().registerIncomingPluginChannel(this, channel2, this);
@@ -43,6 +59,7 @@ this.luckPerms = getServer().getServicesManager().load(LuckPerms.class);
   Bukkit.getConsoleSender().sendMessage("[TELEPORT] CANAL DO BUNGEE " + channel2 + " REGISTRADO");
   new Eventos(this, this.luckPerms).register();
 
+  getCommand("tag").setExecutor(new TagCommand());
   getCommand("set-prefix").setExecutor(new SetPrefix(this, this.luckPerms));
     }
     @Override
@@ -57,16 +74,22 @@ this.luckPerms = getServer().getServicesManager().load(LuckPerms.class);
     	Bukkit.getConsoleSender().sendMessage("[REPORT] EVENTOS INICIANDO");
     	pm.registerEvents(new PlayerJoin(this), this);
     }
+
+public static void darEfeito(Player p, PotionEffectType tipo, int duracao, int level)
+/*     */   {
+/* 349 */     p.addPotionEffect(new PotionEffect(tipo, 20 * duracao, level));
+/*     */   }
     
 
 
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if (!channel.equals("bungee:teleport")) {
+        if (!channel.equals("bungee:teleportp4")) {
           return; 
         }
         String action = null;
         ArrayList<String> received = new ArrayList<>();
         BukkitMain.plugin.getLogger().log(Level.INFO, "CANAL SENDO CHAMADO!");
+        
         try {
         	  ByteArrayDataInput in = ByteStreams.newDataInput(message);
             while (true) {

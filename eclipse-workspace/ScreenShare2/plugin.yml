@@ -6,5 +6,5 @@ loadbefore: [KPCore]
 commands:
   membro:
   set-prefix:
-
+  tag:
   

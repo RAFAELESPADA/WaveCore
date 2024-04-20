@@ -6,6 +6,7 @@ import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.Title;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -70,6 +71,10 @@ if (targetPlayer == sender) {
         o.sendMessage(text);
         o.sendMessage(TextComponent.fromLegacyText(" "));
     });
+    Title t = ProxyServer.getInstance().createTitle();
+    ProxyServer.getInstance().getPlayers().stream().forEach(o -> {
+        o.sendTitle(t.title(TextComponent.fromLegacyText(ChatColor.GREEN + args[0] + " se tornou")).subTitle(TextComponent.fromLegacyText(group.getCachedData().getMetaData().getPrefix().replace("&", "§"))).stay(200));
+     });
     if ((targetPlayer = ProxyServer.getInstance().getPlayer(target)) != null) {
       targetPlayer.sendMessage(ChatColor.RED + "Seu grupo foi atualizado para " + args[1] + " Duração: " + dias + " Dias."); 
     sender.sendMessage(ChatColor.RED + "Você atualizou o grupo de " + target + " para " + args[1] + " !");

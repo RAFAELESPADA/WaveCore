@@ -26,7 +26,7 @@ public class HG extends Command {
 	  commandSender.sendMessage("§cVocê já está nesse servidor");
 		return;
   }
-  if (!OpenHG.istoggled && !p.hasPermission("kombo.cmd.report")) {
+  if (!OpenHG.istoggled && !p.hasPermission("staffchat.use")) {
 	  p.sendMessage(ChatColor.RED + "Essa sala está aberta apenas para nossa equipe.");
 	  return;
   }

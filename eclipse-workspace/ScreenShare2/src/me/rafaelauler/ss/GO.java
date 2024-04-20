@@ -21,7 +21,7 @@ public class GO extends Command {
   
   if (args.length == 0) {
 		commandSender.sendMessage("§cUse /server <Server>.");
-		commandSender.sendMessage("§eServers: kitpvp , rankup, skywars , bedwars, thebridge");
+		commandSender.sendMessage("§eServers: kitpvp , rankup, survival");
 		return;
   }
   if (args.length >= 1) {

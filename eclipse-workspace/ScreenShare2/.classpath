@@ -9,7 +9,7 @@
 	<classpathentry exported="true" kind="lib" path="C:/Users/Home/Desktop/area de trabalho 1 (1)/NOVO SLADE V2/BUNGEECORD/server.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Home/Downloads/lombok.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Home/Downloads/spigot-1.8.8-R0.1-SNAPSHOT-latest.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Home/Desktop/REDEFAINT/BUNGEECORD-ATT/plugins/LuckPerms-Bungee-5.4.117.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Home/Desktop/REDEFAINT/BUNGEECORD-ATT/plugins/JPremium-CLEARED-1.18.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Home/Desktop/REDEFAINT/LOBBY 1.20/plugins/LuckPerms-Bukkit-5.4.119.jar"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Home/Desktop/REDEFAINT/RANKUP ANA/plugins/TAB.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

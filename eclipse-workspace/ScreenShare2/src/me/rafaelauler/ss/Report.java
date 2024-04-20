@@ -69,6 +69,6 @@ public class Report extends Command {
 
 
 private static boolean impossibleToBan(String nickName) {
-    return Stream.of("EvilNaraku", "Wazesxd", "Kombaaa").anyMatch(s -> s.equalsIgnoreCase(nickName));
+    return Stream.of("Rafael_Auler", "Wazesxd", "Kombaaa").anyMatch(s -> s.equalsIgnoreCase(nickName));
 }
 }
