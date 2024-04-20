@@ -29,6 +29,8 @@ import net.luckperms.api.query.QueryOptions;
 public class TagCommand implements CommandExecutor {
 
 	Map<String, Long> cooldowns = new HashMap<String, Long>();
+
+	  public static HashMap<Player , String> tagatual = new HashMap();
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
@@ -122,6 +124,7 @@ try {
             if (Bukkit.getPluginManager().isPluginEnabled("TAB")) {
             	   TabAPI apitab = TabAPI.getInstance();
             apitab.getPlayer(player.getName()).setTemporaryGroup(args[0]);
+            tagatual.put(player, args[0]);
             }
             Bukkit.getConsoleSender().sendMessage(player.getName() + " alterou a tag para " + args[0]);
         });
