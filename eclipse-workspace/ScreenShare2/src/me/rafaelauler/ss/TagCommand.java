@@ -46,19 +46,16 @@ public class TagCommand implements CommandExecutor {
         Set<Group> groups = api.getGroupManager().getLoadedGroups();
         if (args.length == 0) {
         	List<String> groupsList = new ArrayList<>();
-            
-        	for(Group group : groups) {
-        	if (player.hasPermission("ydiscordhook." + group.getName())) {
-        		groupsList.add(group.getName());
-        	}
-        	}
-        	
-        	
-        	
-        	
-                	
-        	player.sendMessage("§aTAGS DISPONÍVEIS PARA VOCÊ: §e" + groupsList);
-        	
+
+            StringBuilder tags = new StringBuilder();
+            PlayerGroup[] values;
+            for (int length = (values = PlayerGroup.values()).length, i = 0; i < length; ++i) {
+                final PlayerGroup tag2 = values[i];
+                if (player.hasPermission(tag2.getPermission())) {
+                    tags.append((tags.length() == 0) ? "" : "§f, ").append(tag2.getColor()).append(tag2.getName().replace("plus", "+"));
+                }
+            }
+            player.sendMessage("§aSuas tags disponíveis são: " + tags);
         	
         	
     
