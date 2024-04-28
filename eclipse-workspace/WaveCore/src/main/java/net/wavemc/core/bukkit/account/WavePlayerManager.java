@@ -2,10 +2,10 @@ package net.wavemc.core.bukkit.account;
 
 import lombok.Getter;
 import net.wavemc.core.bukkit.WaveBukkit;
-import net.wavemc.core.bukkit.account.provider.PlayerPvP;
 
 import java.util.List;
 import java.util.UUID;
+import net.wavemc.core.bukkit.account.provider.PlayerPvP;
 
 public class WavePlayerManager {
 
@@ -29,7 +29,7 @@ public class WavePlayerManager {
         ).findFirst().orElseGet(() -> {
             WavePlayer wavePlayer = new WavePlayer(name,
                     UUID.randomUUID(), true,
-                    new PlayerPvP(0, 0, 0, 0, 0, 0, 0, 0, 0,0 ,0 ,0,0));
+                    new PlayerPvP(0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0 ,0 ,0,0));
             this.players.add(wavePlayer);
             return wavePlayer;
         });

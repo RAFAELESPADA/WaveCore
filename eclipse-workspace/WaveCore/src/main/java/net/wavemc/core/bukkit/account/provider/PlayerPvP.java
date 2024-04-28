@@ -9,10 +9,10 @@ import java.util.UUID;
 @AllArgsConstructor @Data
 public class PlayerPvP {
 
-    private int kills, deaths, killstreak, coins , killsfps , deathsfps , winssumo , deathssumo , winstreaksumo , winsx1, deathsx1 , winstreakx1 , xp;
+    private int kills, deaths, killstreak, coins , killsfps , deathsfps , winssumo , deathssumo , winstreaksumo , winsx1, deathsx1 , winstreakx1 , xp, passouchallege;
 private String uuid;
 
-    public PlayerPvP(int kills, int deaths, int killstreak, int coins, int killsfps, int deathsfps, int winssumo, int deathssumo, int winstreaksumo, int winsx1, int deathsx1, int winstreakx1, int xp) {
+    public PlayerPvP(int kills, int deaths, int killstreak, int coins, int killsfps, int deathsfps, int winssumo, int deathssumo, int winstreaksumo, int winsx1, int deathsx1, int winstreakx1, int xp, int passouchallege) {
     }
 
     public void addKills(int kills) {
@@ -34,7 +34,12 @@ private String uuid;
     public void addWinsSumo(int deaths)  {
         setWinssumo(getWinssumo() + deaths);
     }
-    
+
+
+    public void addChallege(int xp)  {
+        setPassouchallege(getPassouchallege() + xp);
+    }
+
     public void addXP(int xp)  {
         setXp(getXp() + xp);
     }
