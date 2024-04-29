@@ -1,0 +1,8 @@
+mysql:
+  enable: true
+  host: 'localhost'
+  user: 'root'
+  password: ''
+  database: 'minecraft'
+  port: 3306
+UseSSL: 'false'
