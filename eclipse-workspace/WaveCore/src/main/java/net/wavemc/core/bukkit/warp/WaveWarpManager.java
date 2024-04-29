@@ -3,6 +3,8 @@ package net.wavemc.core.bukkit.warp;
 import lombok.Getter;
 import net.wavemc.core.bukkit.WaveBukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+
 import java.util.*;
 
 public class WaveWarpManager {
@@ -17,11 +19,11 @@ public class WaveWarpManager {
     }
 
     public WaveWarp createWarp(String warpName) {
-        return createWarp(warpName, null);
+        return createWarp(warpName, null, null);
     }
 
-    public WaveWarp createWarp(String warpName, Location location) {
-        WaveWarp warp = new WaveWarp(warpName, location);
+    public WaveWarp createWarp(String warpName, Location location, World w) {
+        WaveWarp warp = new WaveWarp(warpName, location, w);
         this.warps.add(warp);
         return warp;
     }

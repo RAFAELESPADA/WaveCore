@@ -24,8 +24,16 @@ public class WaveWarpData extends HelixDataController<WaveWarp> {
         if (!warp.hasLocation()) {
             throw new NullPointerException();
         }
+        if (!warp.hasWorld()) {
+            throw new NullPointerException();
+        }
         try {
-            file.getYaml().set("warps." + warp.getName(), serialize(warp));
+            file.getYaml().set("Mundo-" + warp.getName(), serializeW(warp));
+            file.getYaml().set("X-" + warp.getName(), serializeX(warp));
+            file.getYaml().set("Y-" + warp.getName(), serializeY(warp));
+            file.getYaml().set("Z-" + warp.getName(), serializeZ(warp));
+            file.getYaml().set("PITCH-" + warp.getName(), serializeP(warp));
+            file.getYaml().set("YAW-" + warp.getName(), serializeYW(warp));
             file.save();
         }catch (NullPointerException exception) {
             exception.printStackTrace();
@@ -35,15 +43,10 @@ public class WaveWarpData extends HelixDataController<WaveWarp> {
     @Override
     public WaveWarp load(WaveWarp warp) {
         try {
-            ConfigurationSection section;
-            if ((section = file.getYaml().getConfigurationSection("warps")) == null) {
-                throw new NullPointerException();
-            }
 
-            String serialized = section.getString(warp.getName());
-            Location location = deserialize(serialized);
-            warp.setLocation(location);
 
+
+            String serializedW = file.getYaml().getString("Mundo-" + warp.getName());
             Bukkit.getConsoleSender().sendMessage("§e§lCORE: §fWarp §e'" + warp.getName() + "' §fcarregado!");
         }catch (Exception exception) {
             exception.printStackTrace();
@@ -61,7 +64,7 @@ public class WaveWarpData extends HelixDataController<WaveWarp> {
             }
 
             section.getKeys(false).forEach(warpName -> {
-                WaveWarp warp = new WaveWarp(warpName, null);
+                WaveWarp warp = new WaveWarp(warpName, null, null);
                 warps.add(load(warp));
             });
         }catch (Exception exception) {
@@ -90,7 +93,39 @@ public class WaveWarpData extends HelixDataController<WaveWarp> {
         return location.getWorld().getName() + " : " + location.getX() + " : " + location.getY() +
                 " : " + location.getZ() + " : " + location.getYaw() + " : " + location.getPitch();
     }
+    private String serializeW(WaveWarp warp) {
+        World location;
+        if ((location = warp.getWorldpenis()) == null) {
+            throw new NullPointerException();
+        }
+        return location.getName();
+    }
+    private Double serializeX(WaveWarp warp) {
+        Location location = warp.getLocation();
 
+        return location.getX();
+    }
+    private Double serializeY(WaveWarp warp) {
+        Location location = warp.getLocation();
+
+        return location.getY();
+    }
+    private Double serializeZ(WaveWarp warp) {
+        Location location = warp.getLocation();
+
+        return location.getZ();
+    }
+    private Float serializeYW(WaveWarp warp) {
+        Location location = warp.getLocation();
+
+        return location.getYaw();
+    }
+
+    private Float serializeP(WaveWarp warp) {
+        Location location = warp.getLocation();
+
+        return location.getPitch();
+    }
     private Location deserialize(String serialized) {
         String[] serializedArr = serialized.split(" : ");
 
@@ -102,5 +137,12 @@ public class WaveWarpData extends HelixDataController<WaveWarp> {
         float pitch = Float.parseFloat(serializedArr[5]);
 
         return new Location(world, x, y, z, yaw, pitch);
+    }
+    private String deserializeW(String serialized) {
+        String serializedArr = serialized;
+
+        World world2 = Bukkit.getWorld(serialized);
+
+        return world2.getName();
     }
 }
