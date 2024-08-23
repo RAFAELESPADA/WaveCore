@@ -11,8 +11,5 @@
         <module name="CORE-VITOR" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="WaveCore" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
