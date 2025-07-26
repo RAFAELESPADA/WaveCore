@@ -15,9 +15,6 @@ public class PlayerPvP {
     public PlayerPvP(int kills, int deaths, int killstreak, int coins, int killsfps, int deathsfps, int winssumo, int deathssumo, int winstreaksumo, int winsx1, int deathsx1, int winstreakx1, int xp, int passouchallenge, int thepitkills, int thepitdeaths, int thepitstreak, int gold, int thepitxp) {
     }
 
-    public int setKills(int kills) {
-        return getKills() + kills;
-    }
 
     public int getKills() {
         return kills;
