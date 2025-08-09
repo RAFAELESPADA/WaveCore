@@ -49,11 +49,7 @@ public class PlayerLoadListener implements Listener {
         if (!WaveBukkit.getInstance().getConfig().getBoolean("mysql.enable")) {
             File f = new File(WaveBukkit.getInstance().getDataFolder(), "data.yml");
             Yaml2 config = new Yaml2(WaveBukkit.getInstance(), WaveBukkit.getInstance().getDataFolder(), "data.yml", true, true);
-if (config.getConfig().get("stats." + wavePlayer.getUuid()) == null){
-                config.getConfig().set("stats", wavePlayer.getPvp().getUuid());
-    Bukkit.getConsoleSender().sendMessage("[KP-PVP - DEBUG] CREATING PLAYER UUID OBJECT IN FILE FOR " + wavePlayer.getName());
-
-}            wavePlayer.getPvp().setKills(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".ID"));
+            wavePlayer.getPvp().setKills(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".ID"));
             wavePlayer.getPvp().setXp(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".xp"));
             wavePlayer.getPvp().setKillsfps(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".killsfps"));
             wavePlayer.getPvp().setWinssumo(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".winssumo"));
@@ -72,7 +68,6 @@ if (config.getConfig().get("stats." + wavePlayer.getUuid()) == null){
             wavePlayer.getPvp().setThepitstreak(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitstreak"));
             wavePlayer.getPvp().setGold(config.getConfig().getInt("stats." +wavePlayer.getPvp().getUuid() + ".gold"));
             wavePlayer.getPvp().setThepitxp(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitxp"));
-            wavePlayer.getPvp().setUuid(UUID.fromString(Objects.requireNonNull(config.getConfig().getString("stats." + wavePlayer.getPvp().getUuid() + ".ID"))));
 config.save();
 
         }}
