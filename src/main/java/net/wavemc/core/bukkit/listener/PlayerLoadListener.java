@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.UUID;
 
 @AllArgsConstructor
 public class PlayerLoadListener implements Listener {
@@ -33,7 +34,7 @@ public class PlayerLoadListener implements Listener {
         Player player = event.getPlayer();
         WavePlayer wavePlayer = WaveBukkit.getInstance().getPlayerManager().getPlayer(player.getName());
         if (!Objects.equals(wavePlayer.getPvp().getUuid(), event.getPlayer().getUniqueId().toString())) {
-            wavePlayer.getPvp().setUuid(event.getPlayer().getUniqueId().toString());
+            wavePlayer.getPvp().setUuid(UUID.fromString(event.getPlayer().getUniqueId().toString()));
             Bukkit.getConsoleSender().sendMessage("[KP-PVP - DEBUG] SETTED PLAYER UUID FOR " + wavePlayer.getName());
         }
 
@@ -49,29 +50,29 @@ public class PlayerLoadListener implements Listener {
             File f = new File(WaveBukkit.getInstance().getDataFolder(), "data.yml");
             Yaml2 config = new Yaml2(WaveBukkit.getInstance(), WaveBukkit.getInstance().getDataFolder(), "data.yml", true, true);
 if (config.getConfig().get("stats." + wavePlayer.getUuid()) == null){
-                config.getConfig().set("stats", wavePlayer.getUuid());
+                config.getConfig().set("stats", wavePlayer.getPvp().getUuid());
     Bukkit.getConsoleSender().sendMessage("[KP-PVP - DEBUG] CREATING PLAYER UUID OBJECT IN FILE FOR " + wavePlayer.getName());
 
-}            wavePlayer.getPvp().setKills(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".ID"));
-            wavePlayer.getPvp().setXp(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".xp"));
-            wavePlayer.getPvp().setKillsfps(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".killsfps"));
-            wavePlayer.getPvp().setWinssumo(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".winssumo"));
-            wavePlayer.getPvp().setWinstreaksumo(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".kssumo"));
-            wavePlayer.getPvp().setDeathssumo(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".losessumo"));
-            wavePlayer.getPvp().setDeaths(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".deaths"));
-            wavePlayer.getPvp().setWinsx1(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".wins1v1"));
-            wavePlayer.getPvp().setDeathsx1(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".deaths1v1"));
-            wavePlayer.getPvp().setPassouchallenge(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".passouchallenge"));
-            wavePlayer.getPvp().setWinstreakx1(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".ks1v1"));
-            wavePlayer.getPvp().setDeathsfps(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".deathsfps"));
-            wavePlayer.getPvp().setKillstreak(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".killstreak"));
-            wavePlayer.getPvp().setCoins(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".coins"));
-            wavePlayer.getPvp().setThepitkills(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".thepitkills"));
-            wavePlayer.getPvp().setThepitdeaths(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".thepitdeaths"));
-            wavePlayer.getPvp().setThepitstreak(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".thepitstreak"));
-            wavePlayer.getPvp().setGold(config.getConfig().getInt("stats." +wavePlayer.getUuid() + ".gold"));
-            wavePlayer.getPvp().setThepitxp(config.getConfig().getInt("stats." + wavePlayer.getUuid() + ".thepitxp"));
-            wavePlayer.getPvp().setUuid(config.getConfig().getString("stats." + wavePlayer.getUuid() + ".ID"));
+}            wavePlayer.getPvp().setKills(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".ID"));
+            wavePlayer.getPvp().setXp(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".xp"));
+            wavePlayer.getPvp().setKillsfps(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".killsfps"));
+            wavePlayer.getPvp().setWinssumo(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".winssumo"));
+            wavePlayer.getPvp().setWinstreaksumo(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".kssumo"));
+            wavePlayer.getPvp().setDeathssumo(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".losessumo"));
+            wavePlayer.getPvp().setDeaths(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".deaths"));
+            wavePlayer.getPvp().setWinsx1(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".wins1v1"));
+            wavePlayer.getPvp().setDeathsx1(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".deaths1v1"));
+            wavePlayer.getPvp().setPassouchallenge(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".passouchallenge"));
+            wavePlayer.getPvp().setWinstreakx1(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".ks1v1"));
+            wavePlayer.getPvp().setDeathsfps(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".deathsfps"));
+            wavePlayer.getPvp().setKillstreak(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".killstreak"));
+            wavePlayer.getPvp().setCoins(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".coins"));
+            wavePlayer.getPvp().setThepitkills(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitkills"));
+            wavePlayer.getPvp().setThepitdeaths(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitdeaths"));
+            wavePlayer.getPvp().setThepitstreak(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitstreak"));
+            wavePlayer.getPvp().setGold(config.getConfig().getInt("stats." +wavePlayer.getPvp().getUuid() + ".gold"));
+            wavePlayer.getPvp().setThepitxp(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitxp"));
+            wavePlayer.getPvp().setUuid(UUID.fromString(Objects.requireNonNull(config.getConfig().getString("stats." + wavePlayer.getPvp().getUuid() + ".ID"))));
 config.save();
 
         }}

@@ -10,7 +10,7 @@ import java.util.UUID;
 public class PlayerPvP {
 
     private int kills, deaths, killstreak, coins, killsfps, deathsfps, winssumo, deathssumo, winstreaksumo, winsx1, deathsx1, winstreakx1, xp, passouchallenge, thepitkills, thepitdeaths, thepitstreak, gold, thepitxp;
-    private String uuid;
+    private UUID uuid;
 
     public PlayerPvP(int kills, int deaths, int killstreak, int coins, int killsfps, int deathsfps, int winssumo, int deathssumo, int winstreaksumo, int winsx1, int deathsx1, int winstreakx1, int xp, int passouchallenge, int thepitkills, int thepitdeaths, int thepitstreak, int gold, int thepitxp) {
     }
