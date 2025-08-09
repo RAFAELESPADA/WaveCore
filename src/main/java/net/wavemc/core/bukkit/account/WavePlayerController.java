@@ -22,7 +22,7 @@ public class WavePlayerController extends HelixDataStorageController<WavePlayer>
         super(plugin);
     }
 
-    public void save(final WavePlayer wavePlayer) {
+    public void save(WavePlayer wavePlayer) {
         if (WaveBukkit.getInstance().getConfig().getBoolean("mysql.enable")) {
             try {
                 Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) WaveBukkit.getInstance(), new Runnable() {
@@ -78,7 +78,7 @@ public class WavePlayerController extends HelixDataStorageController<WavePlayer>
         }
     }
 
-    public WavePlayer load(final WavePlayer wavePlayer, StorageConnection storageConnection) {
+    public WavePlayer load(WavePlayer wavePlayer, StorageConnection storageConnection) {
 
         if (WaveBukkit.getInstance().getConfig().getBoolean("mysql.enable")) {
             try {
