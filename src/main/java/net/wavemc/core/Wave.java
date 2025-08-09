@@ -13,7 +13,5 @@ public class Wave {
     private final static Wave instance = new Wave();
     @Getter
     private final ExecutorService executorService = Executors.newFixedThreadPool(50);
-    private final LuckPerms luckPerms = LuckPermsProvider.get();
-
     }
 

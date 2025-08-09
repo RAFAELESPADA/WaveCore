@@ -33,10 +33,8 @@ public class WavePlayerController extends HelixDataStorageController<WavePlayer>
                             String insert = "insert into wave_pvp (name, kills, passouchallenge, deaths, killstreak, killsfps , deathsfps , winssumo , losessumo , kssumo , wins1v1 , deaths1v1 , ks1v1, coins, xp, thepitkills, thepitdeaths, thepitstreak, gold, thepitxp, ID) values ('" + wavePlayer.getName() + "', '" + wavePlayer.getPvp().getKills() + "', '" + wavePlayer.getPvp().getDeaths() + "', '" + wavePlayer.getPvp().getPassouchallenge() + "', '" + wavePlayer.getPvp().getKillstreak() + "', '" + wavePlayer.getPvp().getKillsfps() + "', '" + wavePlayer.getPvp().getDeathsfps() + "', '" + wavePlayer.getPvp().getWinssumo() + "', '" + wavePlayer.getPvp().getDeathssumo() + "', '" + wavePlayer.getPvp().getWinstreaksumo() + "', '" + wavePlayer.getPvp().getWinsx1() + "', '" + wavePlayer.getPvp().getDeathsx1() + "', '" + wavePlayer.getPvp().getWinstreakx1() + "', '" + wavePlayer.getPvp().getCoins() + "', '" + wavePlayer.getPvp().getXp() + "', '" + wavePlayer.getPvp().getThepitkills() + "', '" + wavePlayer.getPvp().getThepitdeaths() + "', '" + wavePlayer.getPvp().getThepitstreak() + "', '" + wavePlayer.getPvp().getThepitxp() + "', '" + wavePlayer.getPvp().getGold() + "', '" + wavePlayer.getUuid() + "')";
                             if (resultSet.next()) {
                                 storageConnection.execute(update);
-                                Bukkit.getServer().getConsoleSender().sendMessage("INSERT STATEMENT: " + update);
                             } else {
                                 storageConnection.execute(insert);
-                                Bukkit.getServer().getConsoleSender().sendMessage("INSERT STATEMENT: " + insert);
                             }
                             resultSet.close();
                             if (!WaveBukkit.getInstance().getConfig().getBoolean("mysql.enable"))
@@ -54,31 +52,29 @@ public class WavePlayerController extends HelixDataStorageController<WavePlayer>
 
             File f = new File(WaveBukkit.getInstance().getDataFolder(), "data.yml");
             Yaml2 config = new Yaml2(WaveBukkit.getInstance(), WaveBukkit.getInstance().getDataFolder(), "data.yml", true, true);
-            try {
 
-                config.getConfig().set(wavePlayer.getUuid() + ".ID", wavePlayer.getPvp().getUuid());
-                config.getConfig().set(wavePlayer.getUuid() + ".kills", wavePlayer.getPvp().getKills());
-                config.getConfig().set(wavePlayer.getUuid() + ".deaths", wavePlayer.getPvp().getDeaths());
-                config.getConfig().set(wavePlayer.getUuid() + ".killstreak", wavePlayer.getPvp().getKillstreak());
-                config.getConfig().set(wavePlayer.getUuid() + ".coins", wavePlayer.getPvp().getCoins());
-                config.getConfig().set(wavePlayer.getUuid() + ".xp", wavePlayer.getPvp().getXp());
-                config.getConfig().set(wavePlayer.getUuid() + ".winsx1", wavePlayer.getPvp().getWinsx1());
-                config.getConfig().set(wavePlayer.getUuid() + ".thepitxp", wavePlayer.getPvp().getThepitxp());
-                config.getConfig().set(wavePlayer.getUuid() + ".winstreaksumo", wavePlayer.getPvp().getWinstreaksumo());
-                config.getConfig().set(wavePlayer.getUuid() + ".winstreakx1", wavePlayer.getPvp().getWinstreakx1());
-                config.getConfig().set(wavePlayer.getUuid() + ".winsx1", wavePlayer.getPvp().getWinsx1());
-                config.getConfig().set(wavePlayer.getUuid() + ".winssumo", wavePlayer.getPvp().getWinssumo());
-                config.getConfig().set(wavePlayer.getUuid() + ".thepitstreak", wavePlayer.getPvp().getThepitstreak());
-                config.getConfig().set(wavePlayer.getUuid() + ".thepitkills", wavePlayer.getPvp().getThepitkills());
-                config.getConfig().set(wavePlayer.getUuid() + ".thepitdeaths", wavePlayer.getPvp().getThepitdeaths());
-                config.getConfig().set(wavePlayer.getUuid() + ".gold", wavePlayer.getPvp().getGold());
-                config.getConfig().set(wavePlayer.getUuid() + ".deathsx1", wavePlayer.getPvp().getDeathsx1());
-                config.getConfig().set(wavePlayer.getUuid() + ".killsfps", wavePlayer.getPvp().getKillsfps());
-                config.getConfig().set(wavePlayer.getUuid() + ".passouchallenge", wavePlayer.getPvp().getPassouchallenge());
-                config.getConfig().save(f);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            Bukkit.getConsoleSender().sendMessage("Saving "  + wavePlayer.getName() + " stats to file!");
+            config.getConfig().set(wavePlayer.getUuid() + ".name", wavePlayer.getName());
+            config.getConfig().set(wavePlayer.getUuid() + ".ID", wavePlayer.getPvp().getUuid());
+            config.getConfig().set(wavePlayer.getUuid() + ".kills", wavePlayer.getPvp().getKills());
+            config.getConfig().set(wavePlayer.getUuid() + ".deaths", wavePlayer.getPvp().getDeaths());
+            config.getConfig().set(wavePlayer.getUuid() + ".killstreak", wavePlayer.getPvp().getKillstreak());
+            config.getConfig().set(wavePlayer.getUuid() + ".coins", wavePlayer.getPvp().getCoins());
+            config.getConfig().set(wavePlayer.getUuid() + ".xp", wavePlayer.getPvp().getXp());
+            config.getConfig().set(wavePlayer.getUuid() + ".winsx1", wavePlayer.getPvp().getWinsx1());
+            config.getConfig().set(wavePlayer.getUuid() + ".thepitxp", wavePlayer.getPvp().getThepitxp());
+            config.getConfig().set(wavePlayer.getUuid() + ".winstreaksumo", wavePlayer.getPvp().getWinstreaksumo());
+            config.getConfig().set(wavePlayer.getUuid() + ".winstreakx1", wavePlayer.getPvp().getWinstreakx1());
+            config.getConfig().set(wavePlayer.getUuid() + ".winsx1", wavePlayer.getPvp().getWinsx1());
+            config.getConfig().set(wavePlayer.getUuid() + ".winssumo", wavePlayer.getPvp().getWinssumo());
+            config.getConfig().set(wavePlayer.getUuid() + ".thepitstreak", wavePlayer.getPvp().getThepitstreak());
+            config.getConfig().set(wavePlayer.getUuid() + ".thepitkills", wavePlayer.getPvp().getThepitkills());
+            config.getConfig().set(wavePlayer.getUuid() + ".thepitdeaths", wavePlayer.getPvp().getThepitdeaths());
+            config.getConfig().set(wavePlayer.getUuid() + ".gold", wavePlayer.getPvp().getGold());
+            config.getConfig().set(wavePlayer.getUuid() + ".deathsx1", wavePlayer.getPvp().getDeathsx1());
+            config.getConfig().set(wavePlayer.getUuid() + ".killsfps", wavePlayer.getPvp().getKillsfps());
+            config.getConfig().set(wavePlayer.getUuid() + ".passouchallenge", wavePlayer.getPvp().getPassouchallenge());
+            config.save();
         }
     }
 
@@ -155,6 +151,7 @@ public class WavePlayerController extends HelixDataStorageController<WavePlayer>
                 wavePlayer.getPvp().setGold(config.getConfig().getInt(wavePlayer.getUuid() + ".gold"));
                 wavePlayer.getPvp().setThepitxp(config.getConfig().getInt(wavePlayer.getUuid() + ".thepitxp"));
                 wavePlayer.getPvp().setUuid(config.getConfig().getString(wavePlayer.getUuid() + ".ID"));
+                config.save();
             } catch (IOException | InvalidConfigurationException e) {
                 throw new RuntimeException(e);
             }
