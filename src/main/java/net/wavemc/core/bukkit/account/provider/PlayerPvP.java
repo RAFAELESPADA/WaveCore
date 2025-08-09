@@ -16,9 +16,6 @@ public class PlayerPvP {
     }
 
 
-    public int getKills() {
-        return kills;
-    }
 
     public void addKills(int kills) {
         setKills(getKills() + kills);
@@ -102,12 +99,5 @@ public class PlayerPvP {
 
     public void removeCoins(int coins) {
         setCoins(getCoins() - coins);
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-    public void setUuid(String uuid2) {
-        uuid = uuid2;
     }
 }
