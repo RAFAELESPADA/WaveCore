@@ -48,27 +48,13 @@ public class PlayerLoadListener implements Listener {
 
         if (!WaveBukkit.getInstance().getConfig().getBoolean("mysql.enable")) {
             File f = new File(WaveBukkit.getInstance().getDataFolder(), "data.yml");
-            Yaml2 config = new Yaml2(WaveBukkit.getInstance(), WaveBukkit.getInstance().getDataFolder(), "data.yml", true, true);
-            wavePlayer.getPvp().setKills(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".ID"));
-            wavePlayer.getPvp().setXp(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".xp"));
-            wavePlayer.getPvp().setKillsfps(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".killsfps"));
-            wavePlayer.getPvp().setWinssumo(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".winssumo"));
-            wavePlayer.getPvp().setWinstreaksumo(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".kssumo"));
-            wavePlayer.getPvp().setDeathssumo(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".losessumo"));
-            wavePlayer.getPvp().setDeaths(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".deaths"));
-            wavePlayer.getPvp().setWinsx1(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".wins1v1"));
-            wavePlayer.getPvp().setDeathsx1(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".deaths1v1"));
-            wavePlayer.getPvp().setPassouchallenge(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".passouchallenge"));
-            wavePlayer.getPvp().setWinstreakx1(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".ks1v1"));
-            wavePlayer.getPvp().setDeathsfps(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".deathsfps"));
-            wavePlayer.getPvp().setKillstreak(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".killstreak"));
-            wavePlayer.getPvp().setCoins(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".coins"));
-            wavePlayer.getPvp().setThepitkills(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitkills"));
-            wavePlayer.getPvp().setThepitdeaths(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitdeaths"));
-            wavePlayer.getPvp().setThepitstreak(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitstreak"));
-            wavePlayer.getPvp().setGold(config.getConfig().getInt("stats." +wavePlayer.getPvp().getUuid() + ".gold"));
-            wavePlayer.getPvp().setThepitxp(config.getConfig().getInt("stats." + wavePlayer.getPvp().getUuid() + ".thepitxp"));
-config.save();
+            Wave.getInstance().getExecutorService().submit(() -> {
+                try (StorageConnection storageConnection = WaveBukkit.getInstance().getStorage().newConnection()) {
+                    WaveBukkit.getInstance().getPlayerManager().getController().load(wavePlayer, storageConnection);
+                } catch (SQLException exception) {
+                    exception.printStackTrace();
+                }
+            });
 
         }}
 
