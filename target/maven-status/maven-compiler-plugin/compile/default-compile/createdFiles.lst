@@ -15,6 +15,7 @@ net\wavemc\core\bukkit\util\BuildUtil.class
 net\wavemc\core\storage\provider\MySQL.class
 net\wavemc\core\storage\provider\SQLite.class
 net\wavemc\core\bukkit\WaveBukkit.class
+net\wavemc\core\bukkit\account\WavePlayerController$3.class
 net\wavemc\core\bukkit\api\Tag.class
 net\wavemc\core\bukkit\message\BukkitMessage.class
 net\wavemc\core\util\CooldownFinishEvent.class

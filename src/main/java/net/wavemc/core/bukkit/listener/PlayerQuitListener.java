@@ -8,6 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -16,10 +17,10 @@ public class PlayerQuitListener implements Listener {
 
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
+    public void onQuit(PlayerQuitEvent event) throws IOException {
         Player player = event.getPlayer();
         WavePlayer helixPlayer = WaveBukkit.getInstance().getPlayerManager().getPlayer(player.getName());
-        if (!Objects.equals(helixPlayer.getPvp().getUuid(), event.getPlayer().getUniqueId().toString())) {
+        if (!Objects.equals(helixPlayer.getPvp().getUuid(), event.getPlayer().getUniqueId())) {
             helixPlayer.getPvp().setUuid(UUID.fromString(event.getPlayer().getUniqueId().toString()));
         }
         WaveBukkit.getPlayerController().save(helixPlayer);

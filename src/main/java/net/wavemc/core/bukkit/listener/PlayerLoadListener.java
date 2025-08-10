@@ -33,7 +33,7 @@ public class PlayerLoadListener implements Listener {
     public void onJoitrn(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         WavePlayer wavePlayer = WaveBukkit.getInstance().getPlayerManager().getPlayer(player.getName());
-        if (!Objects.equals(wavePlayer.getPvp().getUuid(), event.getPlayer().getUniqueId().toString())) {
+        if (!Objects.equals(wavePlayer.getPvp().getUuid(), event.getPlayer().getUniqueId())) {
             wavePlayer.getPvp().setUuid(UUID.fromString(event.getPlayer().getUniqueId().toString()));
             Bukkit.getConsoleSender().sendMessage("[KP-PVP - DEBUG] SETTED PLAYER UUID FOR " + wavePlayer.getName());
         }
@@ -46,17 +46,7 @@ public class PlayerLoadListener implements Listener {
             }
         });
 
-        if (!WaveBukkit.getInstance().getConfig().getBoolean("mysql.enable")) {
-            File f = new File(WaveBukkit.getInstance().getDataFolder(), "data.yml");
-            Wave.getInstance().getExecutorService().submit(() -> {
-                try (StorageConnection storageConnection = WaveBukkit.getInstance().getStorage().newConnection()) {
-                    WaveBukkit.getInstance().getPlayerManager().getController().load(wavePlayer, storageConnection);
-                } catch (SQLException exception) {
-                    exception.printStackTrace();
-                }
-            });
-
-        }}
+        }
 
 
 }
