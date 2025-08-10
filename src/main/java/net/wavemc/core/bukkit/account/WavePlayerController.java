@@ -23,12 +23,8 @@ public class WavePlayerController extends HelixDataStorageController<WavePlayer>
         super(plugin);
     }
 
-<<<<<<< HEAD
     public void save(WavePlayer wavePlayer) throws IOException {
        Player p = Bukkit.getPlayerExact(wavePlayer.getName());
-=======
-    public void save(WavePlayer wavePlayer) {
->>>>>>> c489a32bfe696b20d4c152ec74e34a80f823b0ef
         if (WaveBukkit.getInstance().getConfig().getBoolean("mysql.enable")) {
             try {
                 Bukkit.getScheduler().runTaskLaterAsynchronously((Plugin) WaveBukkit.getInstance(), new Runnable() {
