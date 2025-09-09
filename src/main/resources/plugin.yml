@@ -1,6 +1,6 @@
 name: KPCore
 main: net.wavemc.core.bukkit.WaveBukkit
-version: 4.0.4
+version: 4.0.5
 author: Rafael Auler
 description: Core for KP-PVP PLUGIN
 api-version: 1.13

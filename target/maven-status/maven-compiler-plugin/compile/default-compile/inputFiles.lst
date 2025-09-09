@@ -35,6 +35,7 @@ C:\Users\Home\eclipse-workspace\WaveCore\src\main\java\net\wavemc\core\bukkit\wa
 C:\Users\Home\eclipse-workspace\WaveCore\src\main\java\net\wavemc\core\bukkit\WaveBukkit.java
 C:\Users\Home\eclipse-workspace\WaveCore\src\main\java\net\wavemc\core\mojang\MojangFetcher.java
 C:\Users\Home\eclipse-workspace\WaveCore\src\main\java\net\wavemc\core\storage\provider\MySQL.java
+C:\Users\Home\eclipse-workspace\WaveCore\src\main\java\net\wavemc\core\storage\provider\SettingsManager.java
 C:\Users\Home\eclipse-workspace\WaveCore\src\main\java\net\wavemc\core\storage\provider\SQLite.java
 C:\Users\Home\eclipse-workspace\WaveCore\src\main\java\net\wavemc\core\storage\provider\Yaml2.java
 C:\Users\Home\eclipse-workspace\WaveCore\src\main\java\net\wavemc\core\storage\Storage.java

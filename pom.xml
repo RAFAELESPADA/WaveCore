@@ -18,7 +18,7 @@
     </build>
     <groupId>org.penisgrande</groupId>
     <artifactId>KP-CORE</artifactId>
-    <version>v4.0.3</version>
+    <version>v4.0.5</version>
     <repositories>
         <repository>
             <id>spigot-repo</id>

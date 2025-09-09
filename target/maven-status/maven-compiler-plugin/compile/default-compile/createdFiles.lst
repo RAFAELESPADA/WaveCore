@@ -58,3 +58,4 @@ net\wavemc\core\bukkit\data\HelixDataController.class
 net\wavemc\core\bukkit\util\CCommand.class
 net\wavemc\core\util\WaveCooldown2.class
 net\wavemc\core\bukkit\account\provider\GladiatorPlayer.class
+net\wavemc\core\storage\provider\SettingsManager.class

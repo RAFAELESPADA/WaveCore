@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import net.wavemc.core.bukkit.account.WavePlayer;
 import net.wavemc.core.bukkit.account.UUIDFetcher;
 import net.wavemc.core.bukkit.account.WavePlayerController;
+import net.wavemc.core.storage.provider.SettingsManager;
 import net.wavemc.core.storage.provider.Yaml2;
 import net.wavemc.core.util.UpdateScheduler;
 import org.bukkit.Bukkit;
@@ -51,6 +52,8 @@ public class WaveBukkit extends JavaPlugin {
     @Override
     public void onEnable() {
 setupSimpleCommandMap();
+
+        SettingsManager settings = SettingsManager.getInstance();
         this.uuidFetcher = new UUIDFetcher(1); // Initialize UUIDFetcher with 1 thread
 instance = this;
         saveDefaultConfig();
@@ -77,7 +80,7 @@ Manager = new WavePlayerManager(this);
         loadListeners(Bukkit.getPluginManager());
         startUpdating();
 playerController = new WavePlayerController(this);
-
+        settings.setup(this);
     }
 
     private void loadListeners(PluginManager pluginManager) {
